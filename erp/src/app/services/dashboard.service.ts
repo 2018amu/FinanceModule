@@ -36,7 +36,7 @@ const MONTH_NAMES = [
   providedIn: 'root'
 })
 export class DashboardService {
-  private apiUrl = 'http://localhost:8080/dashboard';
+  private apiUrl = 'http://localhost:8080/api/dashboard';
 
   constructor(private http: HttpClient) {}
 
@@ -54,5 +54,10 @@ export class DashboardService {
         return data;
       })
     );
+  }
+
+   // Update pending actions
+   updatePendingActions(actions: PendingAction[]): Observable<PendingAction[]> {
+    return this.http.put<PendingAction[]>(`${this.apiUrl}/pending-actions`, actions);
   }
 }

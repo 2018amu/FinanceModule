@@ -1,5 +1,6 @@
 package com.company.dashboard;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -28,13 +29,24 @@ public class DashboardData {
     public List<PendingAction> getPendingActions() { return pendingActions; }
     public void setPendingActions(List<PendingAction> pendingActions) { this.pendingActions = pendingActions; }
 
-    // INNER CLASSES
+    // 🔹 ENTITY MAPPING CLASSES
+
+    @Entity
+    @Table(name = "financial_summary")
     public static class Card {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
         private String title;
         private BigDecimal value = BigDecimal.ZERO;
         private String trend = "none";
         private String trendValue = "0";
         private String icon = "";
+
+        // Getters and Setters
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
 
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
@@ -54,12 +66,22 @@ public class DashboardData {
         public void setIcon(String icon) { this.icon = icon; }
     }
 
+    @Entity
+    @Table(name = "pending_actions")
     public static class PendingAction {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
         private String action = "";
         private String module = "";
         private String priority = "Low";
         private LocalDate dueDate = LocalDate.now();
         private String status = "Pending";
+
+        // Getters and Setters
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
 
         public String getAction() { return action; }
         public void setAction(String action) { this.action = action; }

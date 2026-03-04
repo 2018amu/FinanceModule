@@ -2,69 +2,52 @@ package com.company.dashboard;
 
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class DashboardService {
+    private final CardRepository cardRepo;
+    private final PendingActionRepository pendingRepo;
+
+    public DashboardService(CardRepository cardRepo, PendingActionRepository pendingRepo) {
+        this.cardRepo = cardRepo;
+        this.pendingRepo = pendingRepo;
+    }
 
     public DashboardData getDashboardData() {
+
         DashboardData data = new DashboardData();
 
-        // Total Revenue
-        DashboardData.Card totalRevenue = new DashboardData.Card();
-        totalRevenue.setTitle("Total Revenue");
-        totalRevenue.setValue(BigDecimal.valueOf(12345.67));
-        totalRevenue.setTrend("up");
-        totalRevenue.setTrendValue("+12%");
-        totalRevenue.setIcon("fas fa-dollar-sign");
-        data.setTotalRevenue(totalRevenue);
+        List<DashboardData.Card> cards = cardRepo.findAll();
 
-        // Accounts Receivable
-        DashboardData.Card accountsReceivable = new DashboardData.Card();
-        accountsReceivable.setTitle("Accounts Receivable");
-        accountsReceivable.setValue(BigDecimal.valueOf(8901.23));
-        accountsReceivable.setTrend("down");
-        accountsReceivable.setTrendValue("-5%");
-        accountsReceivable.setIcon("fas fa-file-invoice");
-        data.setAccountsReceivable(accountsReceivable);
+        for (DashboardData.Card card : cards) {
 
-        // Accounts Payable
-        DashboardData.Card accountsPayable = new DashboardData.Card();
-        accountsPayable.setTitle("Accounts Payable");
-        accountsPayable.setValue(BigDecimal.valueOf(4567.89));
-        accountsPayable.setTrend("up");
-        accountsPayable.setTrendValue("+3%");
-        accountsPayable.setIcon("fas fa-hand-holding-usd");
-        data.setAccountsPayable(accountsPayable);
+            switch (card.getTitle()) {
 
-        // Cash Balance
-        DashboardData.Card cashBalance = new DashboardData.Card();
-        cashBalance.setTitle("Cash Balance");
-        cashBalance.setValue(BigDecimal.valueOf(2345.67));
-        cashBalance.setTrend("up");
-        cashBalance.setTrendValue("+8%");
-        cashBalance.setIcon("fas fa-wallet");
-        data.setCashBalance(cashBalance);
+                case "Total Revenue":
+                    data.setTotalRevenue(card);
+                    break;
 
-        // Pending Actions
-        DashboardData.PendingAction action1 = new DashboardData.PendingAction();
-        action1.setAction("Approve Budget");
-        action1.setModule("Finance");
-        action1.setPriority("High");
-        action1.setDueDate(LocalDate.now().plusDays(2));
-        action1.setStatus("Pending");
+                case "Accounts Receivable":
+                    data.setAccountsReceivable(card);
+                    break;
 
-        DashboardData.PendingAction action2 = new DashboardData.PendingAction();
-        action2.setAction("Reconcile Accounts");
-        action2.setModule("Accounting");
-        action2.setPriority("Medium");
-        action2.setDueDate(LocalDate.now().plusDays(5));
-        action2.setStatus("In Progress");
+                case "Accounts Payable":
+                    data.setAccountsPayable(card);
+                    break;
 
-        data.setPendingActions(Arrays.asList(action1, action2));
+                case "Cash Balance":
+                    data.setCashBalance(card);
+                    break;
+            }
+        }
+
+        data.setPendingActions(pendingRepo.findAll());
 
         return data;
+    }
+
+    public List<DashboardData.PendingAction> updatePendingActions(List<DashboardData.PendingAction> actions) {
+        return pendingRepo.saveAll(actions);
     }
 }

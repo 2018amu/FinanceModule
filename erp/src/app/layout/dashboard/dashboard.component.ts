@@ -12,6 +12,7 @@ import { DashboardService, DashboardData } from '../../services/dashboard.servic
 export class DashboardComponent implements OnInit {
 
   dashboard: DashboardData | null = null;
+  
   loading = false;
   errorMessage = '';
 
@@ -39,10 +40,24 @@ export class DashboardComponent implements OnInit {
   }
 
   markAllComplete(): void {
-    if (!this.dashboard || !this.dashboard.pendingActions) return;
-    this.dashboard.pendingActions = this.dashboard.pendingActions.map(a => ({
+
+    const dashboard = this.dashboard;
+  
+    if (!dashboard || !dashboard.pendingActions) return;
+  
+    const updatedActions = dashboard.pendingActions.map(a => ({
       ...a,
       status: 'Completed'
     }));
+  
+    this.dashboardService.updatePendingActions(updatedActions).subscribe({
+      next: () => {
+        dashboard.pendingActions = updatedActions;
+      },
+      error: err => {
+        console.error('Error updating pending actions', err);
+        alert('Failed to mark actions complete');
+      }
+    });
   }
 }
