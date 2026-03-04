@@ -1,0 +1,138 @@
+<div id="budgetContent" class="p-6 bg-gray-50 min-h-screen">
+
+  <div class="module-section bg-white rounded-2xl shadow-lg p-6">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+      <h2 class="text-2xl font-bold flex items-center gap-2">
+        <i class="fas fa-chart-line text-blue-600"></i>
+        Budgeting
+      </h2>
+
+      <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow" (click)="createBudget()">
+          <i class="fas fa-plus mr-2"></i> Create Budget
+        </button>
+        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow" (click)="copyBudget()">
+          <i class="fas fa-copy mr-2"></i> Copy from Previous
+        </button>
+        <button class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-xl shadow" (click)="analyzeVariance()">
+          <i class="fas fa-chart-bar mr-2"></i> Variance Analysis
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+      <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-600 font-medium">Current Budget</span>
+          <i class="fas fa-calendar-alt text-blue-600"></i>
+        </div>
+        <div class="text-xl font-bold">Q4 2023</div>
+      </div>
+
+      <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-600 font-medium">Total Budget</span>
+          <i class="fas fa-dollar-sign text-green-600"></i>
+        </div>
+        <div class="text-xl font-bold">${{ totalBudget | number }}</div>
+      </div>
+
+      <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-600 font-medium">Actual vs Budget</span>
+          <i class="fas fa-chart-pie text-yellow-500"></i>
+        </div>
+        <div class="text-xl font-bold">{{ budgetVariancePercent | number:'1.0-1' }}%</div>
+      </div>
+
+      <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-600 font-medium">Over Budget Items</span>
+          <i class="fas fa-exclamation-circle text-red-600"></i>
+        </div>
+        <div class="text-xl font-bold">{{ overBudgetCount }}</div>
+      </div>
+
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex border-b mb-6 text-gray-600 font-medium space-x-6">
+      <button
+        class="pb-2 border-b-2"
+        [ngClass]="currentTab === 'budgetplan' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+        (click)="setTab('budgetplan')">
+        Budget Plan
+      </button>
+      <button
+        class="pb-2 border-b-2"
+        [ngClass]="currentTab === 'budgetvsactual' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+        (click)="setTab('budgetvsactual')">
+        Budget vs Actual
+      </button>
+      <button
+        class="pb-2 border-b-2"
+        [ngClass]="currentTab === 'variancedetails' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+        (click)="setTab('variancedetails')">
+        Variance Details
+      </button>
+    </div>
+
+    <!-- Budget Plan Tab -->
+    <div *ngIf="currentTab === 'budgetplan'" class="overflow-x-auto">
+      <table class="min-w-full border border-gray-200 rounded-xl overflow-hidden">
+        <thead class="bg-gray-100 text-gray-700">
+          <tr>
+            <th class="px-4 py-3 text-left">Account</th>
+            <th class="px-4 py-3 text-left">Budget Amount</th>
+            <th class="px-4 py-3 text-left">Actual Amount</th>
+            <th class="px-4 py-3 text-left">Variance</th>
+            <th class="px-4 py-3 text-left">% Used</th>
+            <th class="px-4 py-3 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <tr *ngFor="let item of budgetData" class="hover:bg-gray-50">
+            <td class="px-4 py-3">{{ item.account }}</td>
+            <td class="px-4 py-3">{{ item.budget | currency }}</td>
+            <td class="px-4 py-3">{{ item.actual | currency }}</td>
+            <td class="px-4 py-3"
+                [ngClass]="item.actual > item.budget ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold'">
+              {{ item.actual - item.budget | currency }}
+            </td>
+            <td class="px-4 py-3">{{ (item.actual / item.budget) * 100 | number:'1.0-1' }}%</td>
+            <td class="px-4 py-3">
+              <span class="px-3 py-1 rounded-full text-sm font-medium"
+                    [ngClass]="{
+                      'bg-red-100 text-red-600': item.actual > item.budget,
+                      'bg-green-100 text-green-600': item.actual < item.budget,
+                      'bg-yellow-100 text-yellow-600': item.actual === item.budget
+                    }">
+                {{ getStatus(item) }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Budget vs Actual Tab -->
+    <div *ngIf="currentTab === 'budgetvsactual'" class="p-4">
+      <p>Total Budget: {{ totalBudget | currency }}</p>
+      <p>Total Actual: {{ getTotalActual() | currency }}</p>
+    </div>
+
+    <!-- Variance Details Tab -->
+    <div *ngIf="currentTab === 'variancedetails'" class="p-4">
+      <ul class="list-disc pl-6">
+        <li *ngFor="let item of budgetData">
+          {{ item.account }}: {{ item.actual - item.budget | currency }}
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

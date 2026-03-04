@@ -1,0 +1,155 @@
+<div id="usersContent" class="p-6 bg-gray-50 min-h-screen">
+
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+  
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <i class="fas fa-users-cog text-blue-600"></i>
+          User Management
+        </h2>
+  
+        <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow"
+                  (click)="addUser()">
+            <i class="fas fa-plus mr-2"></i> Add User
+          </button>
+  
+          <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow"
+                  (click)="manageRoles()">
+            <i class="fas fa-user-shield mr-2"></i> Manage Roles
+          </button>
+  
+          <button class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-xl shadow"
+                  (click)="auditLogs()">
+            <i class="fas fa-history mr-2"></i> View Audit Logs
+          </button>
+        </div>
+      </div>
+  
+      <!-- Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">Total Users</span>
+            <i class="fas fa-users text-blue-600"></i>
+          </div>
+          <div class="text-xl font-bold">{{ users.length }}</div>
+        </div>
+  
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">Active Users</span>
+            <i class="fas fa-user-check text-green-600"></i>
+          </div>
+          <div class="text-xl font-bold">{{ getActiveUsersCount() }}</div>
+        </div>
+  
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">Inactive Users</span>
+            <i class="fas fa-user-slash text-red-600"></i>
+          </div>
+          <div class="text-xl font-bold">{{ getInactiveUsersCount() }}</div>
+        </div>
+  
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">User Roles</span>
+            <i class="fas fa-user-tag text-cyan-600"></i>
+          </div>
+          <div class="text-xl font-bold">{{ roles.length }}</div>
+        </div>
+  
+      </div>
+  
+      <!-- Tabs -->
+      <div class="flex border-b mb-6 space-x-6 text-gray-600 font-medium">
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'userslist' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('userslist')">
+          Users List
+        </button>
+  
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'roles' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('roles')">
+          Roles & Permissions
+        </button>
+  
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'audit' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('audit')">
+          Audit Trail
+        </button>
+      </div>
+  
+      <!-- USERS LIST TAB -->
+      <div *ngIf="currentTab === 'userslist'" class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-xl overflow-hidden">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr>
+              <th class="px-4 py-3 text-left">User ID</th>
+              <th class="px-4 py-3 text-left">Full Name</th>
+              <th class="px-4 py-3 text-left">Email</th>
+              <th class="px-4 py-3 text-left">Role</th>
+              <th class="px-4 py-3 text-left">Department</th>
+              <th class="px-4 py-3 text-left">Last Login</th>
+              <th class="px-4 py-3 text-left">Status</th>
+              <th class="px-4 py-3 text-left">Actions</th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            <tr *ngFor="let user of users" class="hover:bg-gray-50">
+              <td class="px-4 py-3 font-semibold">{{ user.id }}</td>
+              <td class="px-4 py-3">{{ user.fullName }}</td>
+              <td class="px-4 py-3">{{ user.email }}</td>
+              <td class="px-4 py-3">
+                <span class="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-600">
+                  {{ user.role }}
+                </span>
+              </td>
+              <td class="px-4 py-3">{{ user.department }}</td>
+              <td class="px-4 py-3">{{ user.lastLogin }}</td>
+              <td class="px-4 py-3">
+                <span
+                  class="px-3 py-1 rounded-full text-sm"
+                  [ngClass]="user.status === 'Active'
+                    ? 'bg-green-100 text-green-600'
+                    : 'bg-red-100 text-red-600'">
+                  {{ user.status }}
+                </span>
+              </td>
+              <td class="px-4 py-3">
+                <button class="text-blue-600 hover:underline mr-2"
+                        (click)="editUser(user)">
+                  Edit
+                </button>
+                <button class="text-red-600 hover:underline"
+                        (click)="toggleUserStatus(user)">
+                  Toggle
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- ROLES TAB -->
+      <div *ngIf="currentTab === 'roles'" class="p-4">
+        <p>Roles & Permissions content here...</p>
+      </div>
+  
+      <!-- AUDIT TAB -->
+      <div *ngIf="currentTab === 'audit'" class="p-4">
+        <p>Audit Trail content here...</p>
+      </div>
+  
+    </div>
+  </div>
+  

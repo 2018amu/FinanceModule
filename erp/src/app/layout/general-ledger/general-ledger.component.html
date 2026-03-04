@@ -1,0 +1,260 @@
+<div id="glContent" class="page-content block">
+  <div class="module-section">
+    <!-- Section Header -->
+    <div class="section-header flex justify-between items-center mb-6">
+      <h2 class="section-title text-2xl font-semibold flex items-center gap-2">
+        <i class="fas fa-book"></i> General Ledger
+      </h2>
+      <div class="section-actions flex gap-2">
+        <button
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2"
+          onclick="showModal('journalEntryModal')"
+        >
+          <i class="fas fa-plus"></i> Add Journal Entry
+        </button>
+        <button
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center gap-2"
+          onclick="postAllEntries()"
+        >
+          <i class="fas fa-check-circle"></i> Post All Entries
+        </button>
+        <button
+          class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded flex items-center gap-2"
+          onclick="runMonthEndClose()"
+        >
+          <i class="fas fa-calendar-check"></i> Month-End Close
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards-container grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="card bg-white rounded shadow p-4 flex flex-col items-start">
+        <div class="card-header flex items-center justify-between w-full mb-2">
+          <div class="card-title font-medium">Total Journal Entries</div>
+          <i class="fas fa-file-alt text-blue-600"></i>
+        </div>
+        <div class="card-value text-xl font-semibold"><span id="totalJournals">2</span></div>
+      </div>
+      <div class="card bg-white rounded shadow p-4 flex flex-col items-start">
+        <div class="card-header flex items-center justify-between w-full mb-2">
+          <div class="card-title font-medium">Unposted Entries</div>
+          <i class="fas fa-clock text-yellow-500"></i>
+        </div>
+        <div class="card-value text-xl font-semibold"><span id="unpostedJournals">0</span></div>
+      </div>
+      <div class="card bg-white rounded shadow p-4 flex flex-col items-start">
+        <div class="card-header flex items-center justify-between w-full mb-2">
+          <div class="card-title font-medium">This Month</div>
+          <i class="fas fa-calendar-alt text-teal-500"></i>
+        </div>
+        <div class="card-value text-xl font-semibold"><span id="monthJournals">2</span></div>
+      </div>
+      <div class="card bg-white rounded shadow p-4 flex flex-col items-start">
+        <div class="card-header flex items-center justify-between w-full mb-2">
+          <div class="card-title font-medium">Debit/Credit Balance</div>
+          <i class="fas fa-balance-scale text-green-600"></i>
+        </div>
+        <div class="card-value text-xl font-semibold">
+          <span id="debitCreditBalance">$7,500.00 / $7,500.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workflow Steps -->
+    <div class="relative mb-10">
+      <!-- Background Line -->
+      <div class="absolute top-5 left-0 w-full h-1 bg-gray-200"></div>
+
+      <!-- Dynamic Progress Line -->
+      <div
+        class="absolute top-5 left-0 h-1 bg-green-500 transition-all duration-500"
+        [style.width.%]="((currentStep - 1) / (steps.length - 1)) * 100"
+      ></div>
+
+      <!-- Steps -->
+      <div class="relative flex justify-between">
+        <div
+          *ngFor="let step of steps; let i = index"
+          class="flex flex-col items-center relative z-10 cursor-pointer"
+          (click)="goToStep(i + 1)"
+        >
+          <!-- Circle -->
+          <div
+            class="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300"
+            [ngClass]="{
+              'bg-green-500 text-white': currentStep > i + 1,
+              'bg-blue-600 text-white': currentStep === i + 1,
+              'bg-gray-300 text-gray-600': currentStep < i + 1
+            }"
+          >
+            <i *ngIf="currentStep > i + 1" class="fas fa-check"></i>
+            <i *ngIf="currentStep <= i + 1" [class]="step.icon"></i>
+          </div>
+
+          <!-- Label -->
+          <span
+            class="mt-2 text-sm font-medium transition-all duration-300"
+            [ngClass]="{
+              'text-green-600': currentStep > i + 1,
+              'text-blue-600': currentStep === i + 1,
+              'text-gray-500': currentStep < i + 1
+            }"
+          >
+            {{ step.label }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex gap-4">
+      <button
+        class="px-4 py-2 bg-gray-500 text-white rounded disabled:opacity-50"
+        (click)="prevStep()"
+        [disabled]="currentStep === 1"
+      >
+        Previous
+      </button>
+
+      <button
+        class="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+        (click)="nextStep()"
+        [disabled]="currentStep === steps.length"
+      >
+        Next
+      </button>
+    </div>
+
+    
+   <!-- Tabs -->
+<div class="tabs flex border-b mb-4">
+  <div *ngFor="let tab of tabs"
+       class="px-4 py-2 cursor-pointer"
+       [ngClass]="getTabClass(tab.name)"
+       (click)="setTab(tab.name)">
+    {{ tab.label }}
+  </div>
+</div>
+
+<!-- Tab Content -->
+
+<!-- 1️⃣ Journal Entries -->
+<div *ngIf="activeTab === 'journals'">
+  <div class="search-filter flex flex-wrap gap-2 mb-4">
+    <div class="search-box flex items-center border rounded px-2 py-1">
+      <i class="fas fa-search text-gray-500"></i>
+      <input type="text" placeholder="Search journal entries..." class="ml-2 outline-none"
+             (keyup)="searchJournals($event)">
+    </div>
+    <select id="journalStatusFilter" class="filter-dropdown border rounded px-2 py-1"
+            (change)="filterJournals()">
+      <option value="all">All Status</option>
+      <option value="Draft">Draft</option>
+      <option value="Posted">Posted</option>
+    </select>
+    <input type="date" id="journalDateFilter" class="filter-dropdown border rounded px-2 py-1"
+           (change)="filterJournals()">
+  </div>
+
+  <div class="table-container overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+        <tr>
+          <th class="px-3 py-2">Date</th>
+          <th class="px-3 py-2">Journal No.</th>
+          <th class="px-3 py-2">Description</th>
+          <th class="px-3 py-2">Debit Total</th>
+          <th class="px-3 py-2">Credit Total</th>
+          <th class="px-3 py-2">Status</th>
+          <th class="px-3 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 bg-white">
+        <tr *ngFor="let j of filteredJournals" class="hover:bg-gray-50 transition">
+          <td class="px-6 py-4 text-sm text-gray-700">{{ j.date }}</td>
+          <td class="px-6 py-4 text-sm font-semibold text-gray-900">{{ j.no }}</td>
+          <td class="px-6 py-4 text-sm text-gray-600">{{ j.description }}</td>
+          <td class="px-6 py-4 text-sm text-green-600 font-medium">${{ j.debit | number:'1.2-2' }}</td>
+          <td class="px-6 py-4 text-sm text-red-600 font-medium">${{ j.credit | number:'1.2-2' }}</td>
+          <td class="px-6 py-4">
+            <span class="px-3 py-1 text-xs font-semibold rounded-full"
+                  [ngClass]="{
+                    'bg-green-100 text-green-700': j.status==='Posted',
+                    'bg-gray-100 text-gray-700': j.status==='Draft'
+                  }">
+              {{ j.status }}
+            </span>
+          </td>
+          <td class="px-6 py-4 flex gap-2">
+            <button class="p-2 rounded-lg border border-gray-300 hover:bg-blue-50 hover:text-blue-600 transition">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button [disabled]="j.status==='Posted'" class="p-2 rounded-lg border border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed">
+              <i class="fas fa-check"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 2️⃣ Trial Balance -->
+<div *ngIf="activeTab === 'trialbalance'">
+  <h2 class="text-lg font-semibold mb-4">Trial Balance</h2>
+  <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+    <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+      <tr>
+        <th class="px-3 py-2">Account</th>
+        <th class="px-3 py-2">Debit</th>
+        <th class="px-3 py-2">Credit</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 bg-white">
+      <tr *ngFor="let t of trialBalance" class="hover:bg-gray-50 transition">
+        <td class="px-6 py-4">{{ t.account }}</td>
+        <td class="px-6 py-4 text-green-600 font-medium">${{ t.debit | number:'1.2-2' }}</td>
+        <td class="px-6 py-4 text-red-600 font-medium">${{ t.credit | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 3️⃣ Ledger Details -->
+<div *ngIf="activeTab === 'ledger'">
+  <h2 class="text-lg font-semibold mb-4">Ledger Details</h2>
+  <table class="min-w-full divide-y divide-gray-200 border border-gray-200 rounded-lg overflow-hidden">
+    <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+      <tr>
+        <th class="px-3 py-2">Account</th>
+        <th class="px-3 py-2">Date</th>
+        <th class="px-3 py-2">Description</th>
+        <th class="px-3 py-2">Debit</th>
+        <th class="px-3 py-2">Credit</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 bg-white">
+      <tr *ngFor="let l of ledgerEntries" class="hover:bg-gray-50 transition">
+        <td class="px-6 py-4">{{ l.account }}</td>
+        <td class="px-6 py-4">{{ l.date }}</td>
+        <td class="px-6 py-4">{{ l.description }}</td>
+        <td class="px-6 py-4 text-green-600 font-medium">${{ l.debit | number:'1.2-2' }}</td>
+        <td class="px-6 py-4 text-red-600 font-medium">${{ l.credit | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 4️⃣ Period Closing -->
+<div *ngIf="activeTab === 'closing'">
+  <h2 class="text-lg font-semibold mb-4">Period Closing</h2>
+  <p>Current Period: <strong>{{ closingInfo.period }}</strong></p>
+  <p>Status: <strong>{{ closingInfo.status }}</strong></p>
+  <button class="mt-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+    Close Period
+  </button>
+</div>
+ </div>
+      </div>
+   

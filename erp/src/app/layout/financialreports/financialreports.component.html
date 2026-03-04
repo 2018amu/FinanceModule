@@ -1,0 +1,223 @@
+<div class="p-6">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-2xl font-semibold flex items-center gap-2">
+        <i class="fas fa-chart-bar text-blue-600"></i>
+        Financial Reports
+      </h2>
+  
+      <div class="flex gap-3">
+        <button (click)="setTab('balancesheet')"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+          Balance Sheet
+        </button>
+  
+        <button (click)="setTab('incomestatement')"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+          Income Statement
+        </button>
+  
+        <button (click)="setTab('cashflow')"
+          class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg">
+          Cash Flow
+        </button>
+      </div>
+    </div>
+  
+    <!-- Report Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+  
+      <div class="bg-white rounded-2xl shadow p-6 border">
+        <h3 class="font-semibold text-lg flex justify-between items-center">
+          Balance Sheet
+          <i class="fas fa-download text-blue-600 cursor-pointer"></i>
+        </h3>
+        <p class="text-sm text-gray-600 mt-2">
+          Statement of financial position showing assets, liabilities, and equity.
+        </p>
+        <p class="text-xs text-gray-500 mt-3">As of October 31, 2023</p>
+        <button (click)="setTab('balancesheet')"
+          class="mt-4 border border-blue-600 text-blue-600 px-4 py-2 rounded-lg w-full hover:bg-blue-50">
+          View Report
+        </button>
+      </div>
+  
+      <div class="bg-white rounded-2xl shadow p-6 border">
+        <h3 class="font-semibold text-lg flex justify-between items-center">
+          Income Statement
+          <i class="fas fa-download text-green-600 cursor-pointer"></i>
+        </h3>
+        <p class="text-sm text-gray-600 mt-2">
+          Revenue, expenses and net profit for the reporting period.
+        </p>
+        <p class="text-xs text-gray-500 mt-3">Quarter Ended October 31, 2023</p>
+        <button (click)="setTab('incomestatement')"
+          class="mt-4 border border-green-600 text-green-600 px-4 py-2 rounded-lg w-full hover:bg-green-50">
+          View Report
+        </button>
+      </div>
+  
+      <div class="bg-white rounded-2xl shadow p-6 border">
+        <h3 class="font-semibold text-lg flex justify-between items-center">
+          Cash Flow
+          <i class="fas fa-download text-cyan-600 cursor-pointer"></i>
+        </h3>
+        <p class="text-sm text-gray-600 mt-2">
+          Operating, investing and financing cash movements.
+        </p>
+        <p class="text-xs text-gray-500 mt-3">Year to Date</p>
+        <button (click)="setTab('cashflow')"
+          class="mt-4 border border-cyan-600 text-cyan-600 px-4 py-2 rounded-lg w-full hover:bg-cyan-50">
+          View Report
+        </button>
+      </div>
+  
+      <div class="bg-white rounded-2xl shadow p-6 border">
+        <h3 class="font-semibold text-lg flex justify-between items-center">
+          Financial Ratios
+          <i class="fas fa-download text-yellow-600 cursor-pointer"></i>
+        </h3>
+        <p class="text-sm text-gray-600 mt-2">
+          Liquidity, profitability and solvency indicators.
+        </p>
+        <p class="text-xs text-gray-500 mt-3">12 Ratios Calculated</p>
+        <button (click)="setTab('ratios')"
+          class="mt-4 border border-yellow-600 text-yellow-600 px-4 py-2 rounded-lg w-full hover:bg-yellow-50">
+          View Report
+        </button>
+      </div>
+  
+    </div>
+  
+    <!-- Tabs Navigation -->
+    <div class="flex gap-6 border-b mb-6">
+  
+      <button (click)="setTab('balancesheet')"
+        [ngClass]="currentTab==='balancesheet'
+          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'">
+        Balance Sheet
+      </button>
+  
+      <button (click)="setTab('incomestatement')"
+        [ngClass]="currentTab==='incomestatement'
+          ? 'border-b-2 border-green-600 text-green-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'">
+        Income Statement
+      </button>
+  
+      <button (click)="setTab('cashflow')"
+        [ngClass]="currentTab==='cashflow'
+          ? 'border-b-2 border-cyan-600 text-cyan-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'">
+        Cash Flow
+      </button>
+  
+      <button (click)="setTab('ratios')"
+        [ngClass]="currentTab==='ratios'
+          ? 'border-b-2 border-yellow-600 text-yellow-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'">
+        Financial Ratios
+      </button>
+  
+    </div>
+  
+    <!-- ================= BALANCE SHEET ================= -->
+    <div *ngIf="currentTab==='balancesheet'" class="bg-white rounded-2xl shadow p-8">
+  
+      <h3 class="text-xl font-semibold text-center mb-2">Balance Sheet</h3>
+      <p class="text-center text-gray-500 mb-6">As of October 31, 2023</p>
+  
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+  
+        <!-- Assets -->
+        <div>
+          <h4 class="font-semibold mb-3">Assets</h4>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span>Cash & Bank</span><span>45,000</span></div>
+            <div class="flex justify-between"><span>Accounts Receivable</span><span>42,560</span></div>
+            <div class="flex justify-between"><span>Inventory</span><span>38,200</span></div>
+            <div class="flex justify-between font-semibold border-t pt-2">
+              <span>Total Assets</span><span>250,000</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Liabilities & Equity -->
+        <div>
+          <h4 class="font-semibold mb-3">Liabilities & Equity</h4>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between"><span>Accounts Payable</span><span>28,500</span></div>
+            <div class="flex justify-between"><span>Loans Payable</span><span>90,000</span></div>
+            <div class="flex justify-between"><span>Equity</span><span>131,500</span></div>
+            <div class="flex justify-between font-semibold border-t pt-2">
+              <span>Total Liabilities & Equity</span><span>250,000</span>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+  
+    </div>
+  
+    <!-- ================= INCOME STATEMENT ================= -->
+    <div *ngIf="currentTab==='incomestatement'" class="bg-white rounded-2xl shadow p-8">
+  
+      <h3 class="text-xl font-semibold text-center mb-2">Income Statement</h3>
+      <p class="text-center text-gray-500 mb-6">Quarter Ended October 31, 2023</p>
+  
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between"><span>Revenue</span><span>180,000</span></div>
+        <div class="flex justify-between"><span>Cost of Goods Sold</span><span>(95,000)</span></div>
+        <div class="flex justify-between font-semibold border-t pt-2">
+          <span>Gross Profit</span><span>85,000</span>
+        </div>
+        <div class="flex justify-between"><span>Operating Expenses</span><span>(40,000)</span></div>
+        <div class="flex justify-between font-semibold border-t pt-2">
+          <span>Net Profit</span><span>45,000</span>
+        </div>
+      </div>
+  
+    </div>
+  
+    <!-- ================= CASH FLOW ================= -->
+    <div *ngIf="currentTab==='cashflow'" class="bg-white rounded-2xl shadow p-8">
+  
+      <h3 class="text-xl font-semibold text-center mb-6">Cash Flow Statement</h3>
+  
+      <div class="space-y-3 text-sm">
+        <div class="font-semibold">Operating Activities</div>
+        <div class="flex justify-between"><span>Net Profit</span><span>45,000</span></div>
+        <div class="flex justify-between"><span>Depreciation</span><span>8,000</span></div>
+  
+        <div class="font-semibold mt-4">Investing Activities</div>
+        <div class="flex justify-between"><span>Purchase of Equipment</span><span>(12,000)</span></div>
+  
+        <div class="font-semibold mt-4">Financing Activities</div>
+        <div class="flex justify-between"><span>Loan Repayment</span><span>(5,000)</span></div>
+  
+        <div class="flex justify-between font-semibold border-t pt-2">
+          <span>Net Increase in Cash</span><span>36,000</span>
+        </div>
+      </div>
+  
+    </div>
+  
+    <!-- ================= RATIOS ================= -->
+    <div *ngIf="currentTab==='ratios'" class="bg-white rounded-2xl shadow p-8">
+  
+      <h3 class="text-xl font-semibold text-center mb-6">Financial Ratios</h3>
+  
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between"><span>Current Ratio</span><span>2.1</span></div>
+        <div class="flex justify-between"><span>Quick Ratio</span><span>1.6</span></div>
+        <div class="flex justify-between"><span>Gross Profit Margin</span><span>47%</span></div>
+        <div class="flex justify-between"><span>Net Profit Margin</span><span>25%</span></div>
+        <div class="flex justify-between"><span>Debt to Equity Ratio</span><span>0.68</span></div>
+      </div>
+  
+    </div>
+  
+  </div>
+  

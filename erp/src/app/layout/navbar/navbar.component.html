@@ -1,0 +1,70 @@
+<div class="bg-white shadow-md px-6 py-4 flex items-center justify-between">
+
+  <!-- LEFT: Page Title -->
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800">
+      {{headerTitle}}
+    </h1>
+    <div class="text-sm text-gray-500 mt-1">
+      {{selectedDomain}}
+    </div>
+  </div>
+
+  <!-- RIGHT: User Actions -->
+  <div class="flex items-center gap-6">
+
+    <!--  Notification -->
+    <div 
+      class="relative cursor-pointer"
+      (click)="toggleNotifications()">
+
+      <i class="fas fa-bell text-xl text-gray-600 hover:text-indigo-600 transition"></i>
+
+      <span 
+        class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold 
+               w-5 h-5 flex items-center justify-center rounded-full">
+        3
+      </span>
+    </div>
+
+    <!-- Domain Selector -->
+    <select 
+      class="border border-gray-300 rounded-xl px-4 py-2 text-sm 
+             focus:ring-2 focus:ring-indigo-500 outline-none"
+      (change)="changeDomain($event)">
+
+      <option value="general">General Business</option>
+      <option value="hotel">Hotel Industry</option>
+      <option value="education">Education Sector</option>
+      <option value="banking">Banking</option>
+      <option value="manufacturing">Manufacturing</option>
+    </select>
+
+    <!--  User Profile -->
+    <div 
+      class="flex items-center gap-3 cursor-pointer hover:bg-gray-100 px-3 py-2 rounded-xl transition"
+      (click)="showUserMenu()">
+
+      <!-- Avatar -->
+      <div class="w-10 h-10 bg-indigo-600 text-white rounded-full 
+                  flex items-center justify-center font-semibold">
+        AD
+      </div>
+
+      <!-- User Info -->
+      <div class="hidden md:block">
+        <h4 class="text-sm font-semibold text-gray-800">
+          Admin User
+        </h4>
+        <p class="text-xs text-gray-500">
+          System Administrator
+        </p>
+      </div>
+
+      <i class="fas fa-chevron-down text-gray-500 text-sm"></i>
+
+    </div>
+
+  </div>
+
+</div>

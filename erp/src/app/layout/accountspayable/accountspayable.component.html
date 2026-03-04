@@ -1,0 +1,196 @@
+<div class="p-6 bg-gray-100 min-h-screen">
+
+    <!-- HEADER -->
+    <div class="bg-white rounded-2xl shadow p-6 mb-6">
+      <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+  
+        <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+          <i class="fas fa-file-invoice-dollar text-indigo-600"></i>
+          Accounts Payable
+        </h2>
+  
+        <div class="flex flex-wrap gap-3">
+          <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl">
+            <i class="fas fa-plus mr-2"></i> Add Invoice
+          </button>
+  
+          <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl">
+            <i class="fas fa-money-check-alt mr-2"></i> Process Payments
+          </button>
+  
+          <button class="border border-gray-300 hover:bg-gray-100 px-4 py-2 rounded-xl">
+            <i class="fas fa-file-export mr-2"></i> Export
+          </button>
+        </div>
+  
+      </div>
+    </div>
+  
+    <!-- SEARCH + FILTER -->
+   
+<div class="flex flex-col md:flex-row gap-4 mb-6">
+
+    <!-- Search -->
+    <div class="relative flex-1">
+      <i class="fas fa-search absolute top-3 left-3 text-gray-400"></i>
+      <input
+        type="text"
+        placeholder="Search invoices, vendors..."
+        class="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none"
+        [value]="searchTerm"
+        (input)="onSearchChange($event)"
+      >
+    </div>
+  
+    <!-- Status Filter -->
+    <select
+      class="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+      [value]="selectedStatus"
+      (change)="onStatusChange($event)"
+    >
+      <option value="all">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="overdue">Overdue</option>
+      <option value="paid">Paid</option>
+    </select>
+  
+    <!-- Vendor Filter -->
+    <select
+      class="border rounded-xl px-4 py-2 focus:ring-2 focus:ring-indigo-500"
+      [value]="selectedVendor"
+      (change)="onVendorChange($event)"
+    >
+      <option value="all">All Vendors</option>
+      <option *ngFor="let invoice of invoices" [value]="invoice.vendor">{{ invoice.vendor }}</option>
+    </select>
+  
+  </div>
+  
+  
+    <!-- SUMMARY CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+  
+      <div class="bg-white p-5 rounded-2xl shadow">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Total Due</span>
+          <i class="fas fa-exclamation-circle text-red-500"></i>
+        </div>
+        <h3 class="text-2xl font-bold mt-3">$5,601.25</h3>
+      </div>
+  
+      <div class="bg-white p-5 rounded-2xl shadow">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Overdue</span>
+          <i class="fas fa-clock text-yellow-500"></i>
+        </div>
+        <h3 class="text-2xl font-bold mt-3">$5,601.25</h3>
+      </div>
+  
+      <div class="bg-white p-5 rounded-2xl shadow">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Due This Week</span>
+          <i class="fas fa-calendar-week text-indigo-500"></i>
+        </div>
+        <h3 class="text-2xl font-bold mt-3">$2,240.50</h3>
+      </div>
+  
+      <div class="bg-white p-5 rounded-2xl shadow">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">Vendors</span>
+          <i class="fas fa-users text-green-500"></i>
+        </div>
+        <h3 class="text-2xl font-bold mt-3">3</h3>
+      </div>
+  
+    </div>
+  
+    <!-- TABS -->
+    <div class="bg-white rounded-2xl shadow">
+  
+      <!-- Tab Buttons -->
+      <div class="flex border-b">
+  
+        <button
+          (click)="setTab('invoices')"
+          [ngClass]="activeTab === 'invoices'
+            ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold'
+            : 'text-gray-500 hover:text-indigo-600'"
+          class="px-6 py-3 transition">
+          Invoices
+        </button>
+  
+        <button
+          (click)="setTab('vendors')"
+          [ngClass]="activeTab === 'vendors'
+            ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold'
+            : 'text-gray-500 hover:text-indigo-600'"
+          class="px-6 py-3 transition">
+          Vendors
+        </button>
+  
+        <button
+          (click)="setTab('payments')"
+          [ngClass]="activeTab === 'payments'
+            ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold'
+            : 'text-gray-500 hover:text-indigo-600'"
+          class="px-6 py-3 transition">
+          Payment History
+        </button>
+  
+        <button
+          (click)="setTab('aging')"
+          [ngClass]="activeTab === 'aging'
+            ? 'border-b-2 border-indigo-600 text-indigo-600 font-semibold'
+            : 'text-gray-500 hover:text-indigo-600'"
+          class="px-6 py-3 transition">
+          Aging Analysis
+        </button>
+  
+      </div>
+  
+      <!-- INVOICES TAB CONTENT -->
+      <div *ngIf="activeTab === 'invoices'" class="p-6 overflow-x-auto">
+  
+        <table class="min-w-full text-sm text-gray-600">
+          <thead class="bg-gray-100 text-xs uppercase text-gray-700">
+            <tr>
+              <th class="px-6 py-3 text-left">Vendor</th>
+              <th class="px-6 py-3 text-left">Invoice No.</th>
+              <th class="px-6 py-3 text-left">Date</th>
+              <th class="px-6 py-3 text-left">Due Date</th>
+              <th class="px-6 py-3 text-left">Amount</th>
+              <th class="px-6 py-3 text-left">Status</th>
+              <th class="px-6 py-3 text-left">Actions</th>
+            </tr>
+          </thead>
+  
+          <tbody class="divide-y">
+            <tr *ngFor="let invoice of filteredInvoices" class="hover:bg-gray-50">
+              <td class="px-6 py-4">{{ invoice.vendor }}</td>
+              <td class="px-6 py-4">{{ invoice.invoiceNo }}</td>
+              <td class="px-6 py-4">{{ invoice.date }}</td>
+              <td class="px-6 py-4">{{ invoice.dueDate }}</td>
+              <td class="px-6 py-4 font-semibold text-gray-800">${{ invoice.amount }}</td>
+              <td class="px-6 py-4">
+                <span class="px-3 py-1 rounded-full text-xs font-semibold" [ngClass]="getStatusClass(invoice.status)">
+                  {{ invoice.status | titlecase }}
+                </span>
+              </td>
+              <td class="px-6 py-4 flex gap-2">
+                <button class="p-2 border rounded-lg hover:bg-gray-100">
+                  <i class="fas fa-money-bill-wave text-green-600"></i>
+                </button>
+                <button class="p-2 border rounded-lg hover:bg-gray-100">
+                  <i class="fas fa-eye text-indigo-600"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          
+        </table>
+  
+      </div>
+  
+    </div>
+  </div>
+  

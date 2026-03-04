@@ -1,0 +1,172 @@
+<div id="setupContent" class="p-6 bg-gray-50 min-h-screen">
+
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+  
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <i class="fas fa-cogs text-blue-600"></i>
+          Module Setup
+        </h2>
+  
+        <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow"
+                  (click)="saveSetup()">
+            <i class="fas fa-save mr-2"></i> Save Settings
+          </button>
+  
+          <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow"
+                  (click)="testConnection()">
+            <i class="fas fa-plug mr-2"></i> Test Connection
+          </button>
+  
+          <button class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-xl shadow"
+                  (click)="backupConfig()">
+            <i class="fas fa-database mr-2"></i> Backup Config
+          </button>
+        </div>
+      </div>
+  
+      <!-- Workflow Steps -->
+      <div class="w-full py-6">
+
+        <div class="flex items-center justify-between relative">
+      
+          <!-- Progress Line -->
+          <div class="absolute top-6 left-0 w-full h-1 bg-gray-200"></div>
+          <div class="absolute top-6 left-0 h-1 bg-blue-600 transition-all duration-500"
+               [style.width.%]="getProgressWidth()"></div>
+      
+          <!-- Steps -->
+          <div *ngFor="let step of steps; let i = index"
+               class="relative z-10 flex flex-col items-center text-center w-full">
+      
+            <!-- Circle Button -->
+            <button
+              (click)="goToStep(i)"
+              class="w-12 h-12 flex items-center justify-center rounded-full text-white font-semibold shadow-md transition-all duration-300"
+              [ngClass]="{
+                'bg-green-500 hover:bg-green-600': step.status === 'completed',
+                'bg-blue-600 hover:bg-blue-700 scale-110': step.status === 'active',
+                'bg-gray-300 text-gray-700 hover:bg-gray-400': step.status === 'pending'
+              }">
+      
+              <i class="{{ step.icon }}"></i>
+      
+            </button>
+      
+            <!-- Label -->
+            <span class="mt-3 text-sm font-medium"
+                  [ngClass]="{
+                    'text-green-600': step.status === 'completed',
+                    'text-blue-600': step.status === 'active',
+                    'text-gray-500': step.status === 'pending'
+                  }">
+              {{ step.label }}
+            </span>
+      
+          </div>
+      
+        </div>
+      
+      </div>
+      
+      <!-- Tabs -->
+      <div class="flex border-b mb-6 space-x-6 text-gray-600 font-medium">
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'generalsetup' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('generalsetup')">
+          General Setup
+        </button>
+  
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'companysetup' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('companysetup')">
+          Company Information
+        </button>
+  
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'financialsetup' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('financialsetup')">
+          Financial Setup
+        </button>
+  
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'integrations' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('integrations')">
+          Integrations
+        </button>
+      </div>
+  
+      <!-- GENERAL SETUP TAB -->
+      <div *ngIf="currentTab === 'generalsetup'" class="space-y-6">
+  
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Fiscal Year Start
+            </label>
+            <select class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500">
+              <option value="01">January</option>
+              <option value="04">April</option>
+              <option value="07">July</option>
+              <option value="10">October</option>
+            </select>
+          </div>
+  
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Base Currency
+            </label>
+            <select class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500">
+              <option value="USD">USD - US Dollar</option>
+              <option value="EUR">EUR - Euro</option>
+              <option value="GBP">GBP - British Pound</option>
+              <option value="JPY">JPY - Japanese Yen</option>
+            </select>
+          </div>
+  
+        </div>
+  
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Tax Identification Number
+          </label>
+          <input type="text"
+                 placeholder="Enter TAX ID"
+                 class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500" />
+        </div>
+  
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Accounting Method
+          </label>
+          <select class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500">
+            <option value="accrual">Accrual Basis</option>
+            <option value="cash">Cash Basis</option>
+          </select>
+        </div>
+  
+      </div>
+  
+      <!-- Other Tabs -->
+      <div *ngIf="currentTab === 'companysetup'" class="p-4">
+        Company Information content here...
+      </div>
+  
+      <div *ngIf="currentTab === 'financialsetup'" class="p-4">
+        Financial Setup content here...
+      </div>
+  
+      <div *ngIf="currentTab === 'integrations'" class="p-4">
+        Integrations content here...
+      </div>
+  
+    </div>
+  </div>
+  

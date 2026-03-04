@@ -1,0 +1,129 @@
+<div id="bankContent" class="p-6 bg-gray-50 min-h-screen">
+
+    <div class="module-section bg-white rounded-2xl shadow-lg p-6">
+  
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+          <i class="fas fa-university text-blue-600"></i>
+          Bank & Reconciliation
+        </h2>
+  
+        <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
+          <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow" (click)="addBankAccount()">
+            <i class="fas fa-plus mr-2"></i> Add Bank Account
+          </button>
+  
+          <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl shadow" (click)="importBankStatement()">
+            <i class="fas fa-file-import mr-2"></i> Import Statement
+          </button>
+  
+          <button class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-xl shadow" (click)="reconcileAccount()">
+            <i class="fas fa-sync-alt mr-2"></i> Reconcile
+          </button>
+        </div>
+      </div>
+  
+      <!-- Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">Total Bank Balance</span>
+            <i class="fas fa-university text-blue-600"></i>
+          </div>
+          <div class="text-xl font-bold">${{ totalBankBalance | number }}</div>
+        </div>
+  
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">Unreconciled Items</span>
+            <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+          </div>
+          <div class="text-xl font-bold">{{ unreconciledCount }}</div>
+        </div>
+  
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">Last Reconciliation</span>
+            <i class="fas fa-calendar-check text-green-600"></i>
+          </div>
+          <div class="text-xl font-bold">{{ lastReconciliation }}</div>
+        </div>
+  
+        <div class="bg-gray-50 p-5 rounded-2xl shadow-sm border">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-gray-600 font-medium">Bank Accounts</span>
+            <i class="fas fa-credit-card text-cyan-600"></i>
+          </div>
+          <div class="text-xl font-bold">{{ bankAccountsCount }}</div>
+        </div>
+      </div>
+  
+      <!-- Tabs -->
+      <div class="flex border-b mb-6 space-x-6 text-gray-600 font-medium">
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'bankaccounts' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('bankaccounts')">
+          Bank Accounts
+        </button>
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'transactions' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('transactions')">
+          Bank Transactions
+        </button>
+        <button
+          class="pb-2 border-b-2"
+          [ngClass]="currentTab === 'reconciliation' ? 'border-blue-600 text-blue-600' : 'border-transparent'"
+          (click)="setTab('reconciliation')">
+          Reconciliation
+        </button>
+      </div>
+  
+      <!-- Bank Accounts Tab -->
+      <div *ngIf="currentTab === 'bankaccounts'" class="overflow-x-auto">
+        <table class="min-w-full border border-gray-200 rounded-xl overflow-hidden">
+          <thead class="bg-gray-100 text-gray-700">
+            <tr>
+              <th class="px-4 py-3 text-left">Account Name</th>
+              <th class="px-4 py-3 text-left">Bank Name</th>
+              <th class="px-4 py-3 text-left">Account Number</th>
+              <th class="px-4 py-3 text-left">Account Type</th>
+              <th class="px-4 py-3 text-left">Current Balance</th>
+              <th class="px-4 py-3 text-left">Last Updated</th>
+              <th class="px-4 py-3 text-left">Status</th>
+              <th class="px-4 py-3 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let bank of bankAccounts" class="hover:bg-gray-50">
+              <td class="px-4 py-3">{{ bank.accountName }}</td>
+              <td class="px-4 py-3">{{ bank.bankName }}</td>
+              <td class="px-4 py-3">{{ bank.accountNumber }}</td>
+              <td class="px-4 py-3">{{ bank.accountType }}</td>
+              <td class="px-4 py-3">{{ bank.currentBalance | currency }}</td>
+              <td class="px-4 py-3">{{ bank.lastUpdated }}</td>
+              <td class="px-4 py-3">{{ bank.status }}</td>
+              <td class="px-4 py-3">
+                <button class="text-blue-600 hover:underline mr-2" (click)="editBank(bank)">Edit</button>
+                <button class="text-red-600 hover:underline" (click)="deleteBank(bank)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Bank Transactions Tab -->
+      <div *ngIf="currentTab === 'transactions'" class="p-4">
+        <p>Bank Transactions content here...</p>
+      </div>
+  
+      <!-- Reconciliation Tab -->
+      <div *ngIf="currentTab === 'reconciliation'" class="p-4">
+        <p>Reconciliation content here...</p>
+      </div>
+  
+    </div>
+  </div>
+  

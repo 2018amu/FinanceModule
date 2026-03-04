@@ -1,0 +1,189 @@
+<div class="w-64 bg-indigo-900 text-white p-6">
+  <h1 class="text-xl font-bold mb-8">ERP Finance</h1>
+
+  
+   
+  <ul class="space-y-2 text-sm font-medium">
+    
+    <!-- Dashboard -->
+    <li
+      routerLink="/"
+      routerLinkActive="bg-indigo-700 text-white"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-indigo-700 hover:text-white transition duration-200"
+      (click)="setHeader('Finance Dashboard')"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 13.5V6a2.25 2.25 0 012.25-2.25h3A2.25 2.25 0 0110.5 6v7.5M3 13.5h7.5M14.25 3.75H18.75A2.25 2.25 0 0121 6v3.75"
+        />
+      </svg>
+      Dashboard
+    </li>
+
+    <!-- Chart of Accounts -->
+    <li
+      routerLink="/chartofaccounts"
+      routerLinkActive="bg-indigo-700 text-white"
+      class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-indigo-700 hover:text-white transition duration-200"
+      (click)="setHeader('Chart of Accounts')"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3 3v18h18M9 17V9M13 17V5M17 17v-3"
+        />
+      </svg>
+      Chart of Accounts
+    </li>
+
+    <!-- General Ledger -->
+    <li
+      routerLink="/generalledger"
+      routerLinkActive="bg-indigo-700 text-white"
+      class="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-indigo-700 hover:text-white transition duration-200"
+      (click)="setHeader('General Ledger')"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 4h12M6 8h12M6 12h12M6 16h12" />
+      </svg>
+      General Ledger
+    </li>
+
+    <!-- Accounts Payable -->
+    <li
+      routerLink="/accountspayable"
+      routerLinkActive="bg-indigo-700 text-white"
+      (click)="setHeader('Accounts Payable')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 8c-2 0-3 1-3 2s1 2 3 2 3 1 3 2-1 2-3 2"
+        />
+      </svg>
+      Accounts Payable
+    </li>
+
+    <!-- Accounts Receivable -->
+    <li
+      routerLink="/accountsrecievable"
+      routerLinkActive="bg-indigo-700 text-white"
+      (click)="setHeader('Accounts Receivable')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h11M9 21l-6-6 6-6" />
+      </svg>
+      Accounts Receivable
+    </li>
+
+    <!-- Fixed Assets -->
+    <li
+      routerLink="/fixedassets"
+      routerLinkActive="bg-indigo-700 text-white"
+      (click)="setHeader('Fixed Assets')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18" />
+      </svg>
+      Fixed Assets
+    </li>
+
+    <!-- Bank & Reconciliation -->
+    <li  
+    routerLink="/bankandreconciliation"
+    routerLinkActive="bg-indigo-700 text-white"
+    (click)="setHeader('Bank & Reconciliation')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M2.25 12l9.75-9.75L21.75 12M4.5 10.5v9h15v-9"
+        />
+      </svg>
+      Bank & Reconciliation
+    </li>
+
+    <!-- Budgeting -->
+    <li
+      routerLink="/budgeting"
+      routerLinkActive="bg-indigo-700 text-white"
+      (click)="setHeader('Budgeting')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
+      </svg>
+      Budgeting
+    </li>
+
+    <!-- Financial Reports -->
+    <li
+      routerLink="/financialreports"
+      routerLinkActive="bg-indigo-700 text-white"
+      (click)="setHeader('Financial Reports')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6m4 6v-4m4 4v-2" />
+      </svg>
+      Financial Reports
+    </li>
+
+    <!-- User Management -->
+    <li 
+    routerLink="/usermanagement"
+    routerLinkActive="bg-indigo-700 text-white"
+    (click)="setHeader('User Management')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.25a8.25 8.25 0 0115 0"
+        />
+      </svg>
+      User Management
+    </li>
+
+    <!-- Module Setup -->
+    <li
+    routerLink="/modulesetup"
+    routerLinkActive="bg-indigo-700 text-white"
+    (click)="setHeader('Module SetUp')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 6h9M4.5 6h.008v.008H4.5V6zm0 6h.008v.008H4.5V12zm0 6h.008v.008H4.5V18z"
+        />
+      </svg>
+      Module Setup
+    </li>
+
+    <!-- Domain Comparison -->
+    <li
+      routerLink="/domaincomparison"
+      routerLinkActive="bg-indigo-700 text-white"
+      (click)="setHeader('Domain Comparison')"
+      class="flex items-center gap-3 p-3 rounded-lg hover:bg-indigo-700 hover:text-white transition cursor-pointer"
+    >
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 4.5h6m-6 4.5h3" />
+      </svg>
+      Domain Comparison
+    </li>
+  </ul>
+</div>
