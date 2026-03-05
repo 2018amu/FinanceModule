@@ -1,115 +1,175 @@
-import { Component } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Account {
-  id: number;
-  code: string;
-  name: string;
-  type: string;
-  subtype: string;
-  balance: number;
-  status: string;
-}
+import { ChartofaccountsService, Account } from '../../services/chartofaccounts.service';
 
 @Component({
   selector: 'app-chart-of-accounts',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './chartofaccounts.component.html',
-  styleUrls: ['./chartofaccounts.component.css'],
-  providers: [DecimalPipe]
+  styleUrls: ['./chartofaccounts.component.css']
 })
-export class ChartOfAccountsComponent {
+export class ChartOfAccountsComponent implements OnInit {
+
+  accounts: Account[] = [];
+  showAddModal: boolean = false;
+  editMode: boolean = false; 
 
   currentTab: 'accounts' | 'hierarchy' | 'balances' = 'accounts';
-
   searchText: string = '';
   filterType: string = 'all';
   filterStatus: string = 'all';
 
-  accounts: Account[] = [];
+  types: string[] = ['Asset', 'Liability', 'Equity', 'Revenue', 'Expense'];
 
-  constructor() {
-    this.loadSampleCOA(); // Load sample data initially
+  newAccount: Account = this.getEmptyAccount();
+
+  constructor(private coaService: ChartofaccountsService) {}
+
+  ngOnInit(): void {
+    this.loadAccounts();
   }
 
-  // Tab switch
-  setTab(tab: 'accounts' | 'hierarchy' | 'balances') {
-    this.currentTab = tab;
+  private getEmptyAccount(): Account {
+    return {
+      account_code: '',
+      account_name: '',
+      type: 'Expense',
+      sub_type: '',
+      balance: 0,
+      status: 'Active'
+    };
   }
 
-  // Actions
-  editAccount(accountId: number) {
-    alert(`Edit account ${accountId}`);
+  // Export COA as JSON file
+exportCOA() {
+  if (!this.accounts || this.accounts.length === 0) {
+    alert("No accounts available to export.");
+    return;
   }
 
-  toggleAccountStatus(accountId: number) {
+  const dataStr = JSON.stringify(this.accounts, null, 2); // pretty JSON
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'chart_of_accounts.json';
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+}
+
+  loadAccounts() {
+    this.coaService.getAccounts().subscribe({
+      next: data => this.accounts = data,
+      error: err => console.error("Error loading accounts:", err)
+    });
+  }
+
+ 
+
+  // Show modal for adding new account
+addAccount() {
+  this.editMode = false; 
+  this.resetNewAccountForm();
+  this.showAddModal = true;
+}
+
+// Close modal
+closeModal() {
+  this.showAddModal = false;
+}
+
+// Save new account to backend
+saveNewAccount() {
+  if (!this.newAccount.account_code || !this.newAccount.account_name) {
+    alert("Account Code and Account Name are required.");
+    return;
+  }
+
+  this.coaService.addAccount(this.newAccount).subscribe({
+    next: (saved) => {
+      // Ensure ID exists
+      if (!saved.id) {
+        saved.id = this.accounts.length
+          ? Math.max(...this.accounts.map((a) => a.id!)) + 1
+          : 1;
+      }
+
+      this.accounts.push(saved);
+      this.resetNewAccountForm();
+      this.showAddModal = false;
+      alert("Account saved successfully!");
+    },
+    error: (err) => {
+      console.error("Save error", err);
+      alert("Error saving account. Check backend.");
+    },
+  });
+}
+
+// Reset form
+resetNewAccountForm() {
+  this.newAccount = {
+    account_code: "",
+    account_name: "",
+    type: "Expense",
+    sub_type: "",
+    balance: 0,
+    status: "Active",
+  };
+}
+
+  editAccount(accountId?: number) {
+    if (!accountId) return;
     const acc = this.accounts.find(a => a.id === accountId);
-    if (acc) acc.status = acc.status === 'Active' ? 'Inactive' : 'Active';
+    if (acc) {
+      this.newAccount = { ...acc };
+      this.showAddModal = true;
+    }
   }
 
-  addAccount() {
-    alert('Add Account clicked!');
+  deleteAccount(accountId?: number) {
+    if (!accountId) return;
+    if (!confirm("Are you sure you want to delete this account?")) return;
+
+    this.coaService.deleteAccount(accountId).subscribe({
+      next: () => this.accounts = this.accounts.filter(a => a.id !== accountId),
+      error: err => console.error("Error deleting account:", err)
+    });
   }
 
-  exportCOA() {
-    const dataStr = JSON.stringify(this.accounts, null, 2);
-    const blob = new Blob([dataStr], { type: 'application/json' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'chart_of_accounts.json';
-    a.click();
-    window.URL.revokeObjectURL(url);
+  toggleAccountStatus(accountId?: number) {
+    if (!accountId) return;
+    const acc = this.accounts.find(a => a.id === accountId);
+    if (!acc) return;
+
+    acc.status = acc.status === 'Active' ? 'Inactive' : 'Active';
+    this.coaService.updateAccount(acc).subscribe({
+      next: updated => {
+        const idx = this.accounts.findIndex(a => a.id === updated.id);
+        if (idx !== -1) this.accounts[idx] = updated;
+      },
+      error: err => console.error("Error toggling status:", err)
+    });
   }
 
-  loadSampleCOA() {
-    this.accounts = [
-      { id:1, code:'1000', name:'Cash', type:'Asset', subtype:'Current Asset', balance:125420, status:'Active' },
-      { id:2, code:'1100', name:'Accounts Receivable', type:'Asset', subtype:'Current Asset', balance:42560, status:'Active' },
-      { id:3, code:'1200', name:'Inventory', type:'Asset', subtype:'Current Asset', balance:85000, status:'Active' },
-      { id:4, code:'1500', name:'Equipment', type:'Asset', subtype:'Fixed Asset', balance:250000, status:'Active' },
-      { id:5, code:'2000', name:'Accounts Payable', type:'Liability', subtype:'Current Liability', balance:28750, status:'Active' },
-      { id:6, code:'2500', name:'Loans Payable', type:'Liability', subtype:'Long-term Liability', balance:150000, status:'Active' },
-      { id:7, code:'3000', name:'Common Stock', type:'Equity', subtype:'-', balance:200000, status:'Active' },
-      { id:8, code:'3100', name:'Retained Earnings', type:'Equity', subtype:'-', balance:125230, status:'Active' },
-      { id:9, code:'4000', name:'Sales Revenue', type:'Revenue', subtype:'Operating Revenue', balance:450000, status:'Active' },
-      { id:10, code:'4100', name:'Service Revenue', type:'Revenue', subtype:'Operating Revenue', balance:85000, status:'Active' },
-      { id:11, code:'5000', name:'Cost of Goods Sold', type:'Expense', subtype:'-', balance:225000, status:'Active' },
-      { id:12, code:'6000', name:'Salaries Expense', type:'Expense', subtype:'-', balance:125000, status:'Active' },
-      { id:13, code:'6100', name:'Rent Expense', type:'Expense', subtype:'-', balance:36000, status:'Active' },
-      { id:14, code:'6200', name:'Utilities Expense', type:'Expense', subtype:'-', balance:8500, status:'Active' },
-    ];
-  }
-
-  // Filters
   get filteredAccounts() {
     return this.accounts.filter(acc => {
-      const matchSearch = acc.name.toLowerCase().includes(this.searchText.toLowerCase());
+      const matchSearch = acc.account_name?.toLowerCase().includes(this.searchText.toLowerCase());
       const matchType = this.filterType === 'all' || acc.type === this.filterType;
       const matchStatus = this.filterStatus === 'all' || acc.status === this.filterStatus;
       return matchSearch && matchType && matchStatus;
     });
   }
 
-  // Account hierarchy
-  getAccountsByType(type: string) {
-    return this.accounts.filter(a => a.type === type);
+  setTab(tab: 'accounts' | 'hierarchy' | 'balances') {
+    this.currentTab = tab;
   }
 
   getAccountTypes() {
     return Array.from(new Set(this.accounts.map(a => a.type)));
-  }
-
-  // Account balances
-  getTotalBalance(type: string) {
-    return this.accounts
-      .filter(a => a.type === type)
-      .reduce((sum, a) => sum + a.balance, 0);
-  }
-
-  getTotalAllAccounts() {
-    return this.accounts.reduce((sum, a) => sum + a.balance, 0);
   }
 }

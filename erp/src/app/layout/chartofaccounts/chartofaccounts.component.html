@@ -1,149 +1,146 @@
-<div class="p-6 bg-gray-50 min-h-screen">
+<div id="coaContent" class="p-6 bg-gray-50 min-h-screen">
 
-  <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-      <i class="fas fa-list-alt"></i> Chart of Accounts
-    </h2>
-    <div class="flex gap-3">
-      <button (click)="addAccount()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-        <i class="fas fa-plus"></i> Add Account
-      </button>
-      <button (click)="exportCOA()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-        <i class="fas fa-file-export"></i> Export
-      </button>
-      <button (click)="loadSampleCOA()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-        <i class="fas fa-download"></i> Load Sample
-      </button>
-    </div>
-  </div>
+  <!-- Container -->
+  <div class="bg-white rounded-lg shadow p-6">
 
-  <!-- Tabs -->
-  <div class="flex gap-6 border-b mb-6">
-    <button 
-      class="pb-2 font-semibold" 
-      [ngClass]="{'border-b-2 border-indigo-600 text-indigo-600': currentTab==='accounts','text-gray-500 hover:text-indigo-600': currentTab!=='accounts'}"
-      (click)="setTab('accounts')">
-      Accounts List
-    </button>
-    <button 
-      class="pb-2 font-semibold" 
-      [ngClass]="{'border-b-2 border-indigo-600 text-indigo-600': currentTab==='hierarchy','text-gray-500 hover:text-indigo-600': currentTab!=='hierarchy'}"
-      (click)="setTab('hierarchy')">
-      Account Hierarchy
-    </button>
-    <button 
-      class="pb-2 font-semibold" 
-      [ngClass]="{'border-b-2 border-indigo-600 text-indigo-600': currentTab==='balances','text-gray-500 hover:text-indigo-600': currentTab!=='balances'}"
-      (click)="setTab('balances')">
-      Account Balances
-    </button>
-  </div>
-
-  <!-- Filters (Search + Type + Status) -->
-  <div *ngIf="currentTab==='accounts'" class="flex flex-wrap gap-4 mb-4">
-    <input type="text" placeholder="Search accounts..." [(ngModel)]="searchText" class="border rounded px-4 py-2 w-64"/>
-    <select [(ngModel)]="filterType" class="border rounded px-4 py-2">
-      <option value="all">All Types</option>
-      <option *ngFor="let t of getAccountTypes()" [value]="t">{{t}}</option>
-    </select>
-    <select [(ngModel)]="filterStatus" class="border rounded px-4 py-2">
-      <option value="all">All Status</option>
-      <option value="Active">Active</option>
-      <option value="Inactive">Inactive</option>
-    </select>
-  </div>
-
-  <!-- Accounts List -->
-  <div *ngIf="currentTab==='accounts'" class="bg-white rounded-xl shadow overflow-x-auto">
-
-    <table class="min-w-full text-sm text-left">
-      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-        <tr>
-          <th class="px-6 py-3">Code</th>
-          <th class="px-6 py-3">Name</th>
-          <th class="px-6 py-3">Type</th>
-          <th class="px-6 py-3">Sub Type</th>
-          <th class="px-6 py-3">Balance</th>
-          <th class="px-6 py-3">Status</th>
-          <th class="px-6 py-3">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y">
-        <tr *ngFor="let acc of filteredAccounts" class="hover:bg-gray-50">
-          <td class="px-6 py-4 font-semibold">{{acc.code}}</td>
-          <td class="px-6 py-4">{{acc.name}}</td>
-          <td class="px-6 py-4">
-            <span [ngClass]="{
-              'bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-xs': acc.type==='Asset',
-              'bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs': acc.type==='Liability',
-              'bg-green-100 text-green-700 px-2 py-1 rounded text-xs': acc.type==='Equity',
-              'bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs': acc.type==='Revenue',
-              'bg-red-100 text-red-700 px-2 py-1 rounded text-xs': acc.type==='Expense'
-            }">{{acc.type}}</span>
-          </td>
-          <td class="px-6 py-4">{{acc.subtype}}</td>
-          <td class="px-6 py-4 font-medium">${{acc.balance | number}}</td>
-          <td class="px-6 py-4">
-            <span [ngClass]="{
-              'bg-green-100 text-green-700 px-2 py-1 rounded text-xs': acc.status==='Active',
-              'bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs': acc.status==='Inactive'
-            }">{{acc.status}}</span>
-          </td>
-          <td class="px-6 py-4 flex gap-2">
-            <button (click)="editAccount(acc.id)" class="text-indigo-600 hover:text-indigo-800">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button (click)="toggleAccountStatus(acc.id)" class="text-red-600 hover:text-red-800">
-              <i class="fas fa-ban"></i>
-            </button>
-          </td>
-          
-          
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Account Hierarchy -->
-  <div *ngIf="currentTab==='hierarchy'" class="bg-white p-6 rounded-xl shadow space-y-6">
-    <div *ngFor="let type of getAccountTypes()">
-      <h4 class="text-indigo-600 font-semibold mb-2">{{type}} Accounts</h4>
-      <div class="ml-6 space-y-2 text-sm">
-        <div *ngFor="let acc of getAccountsByType(type)" class="flex justify-between border-b pb-2">
-          <span class="font-medium">{{acc.code}} - {{acc.name}}</span>
-          <span>${{acc.balance | number}}</span>
-        </div>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold flex items-center text-gray-800">
+        <i class="fas fa-list-alt mr-2"></i> Chart of Accounts
+      </h2>
+      <div class="flex space-x-3">
+        <button class="flex items-center bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
+                (click)="addAccount()">
+          <i class="fas fa-plus mr-2"></i> Add Account
+        </button>
+        <button class="flex items-center bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500"
+                (click)="exportCOA()">
+          <i class="fas fa-file-export mr-2"></i> Export
+        </button>
       </div>
     </div>
-  </div>
 
-  <!-- Account Balances -->
-  <div *ngIf="currentTab==='balances'" class="bg-white p-6 rounded-xl shadow">
-    <h3 class="text-xl font-semibold mb-6">Account Balances Summary</h3>
-    <table class="min-w-full text-sm">
-      <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-        <tr>
-          <th class="px-6 py-3 text-left">Type</th>
-          <th class="px-6 py-3 text-left">No of Accounts</th>
-          <th class="px-6 py-3 text-left">Total Balance</th>
-          <th class="px-6 py-3 text-left">Percentage</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y">
-        <tr *ngFor="let type of getAccountTypes()">
-          <td class="px-6 py-4">{{type}}</td>
-          <td class="px-6 py-4">{{getAccountsByType(type).length}}</td>
-          <td class="px-6 py-4">${{getTotalBalance(type) | number}}</td>
-          <td class="px-6 py-4 w-64">
-            <div class="w-full bg-gray-200 h-2 rounded mb-1">
-              <div class="bg-indigo-600 h-2 rounded" [style.width.%]="(getTotalBalance(type)/getTotalAllAccounts())*100"></div>
-            </div>
-            <span class="text-xs text-gray-500">{{((getTotalBalance(type)/getTotalAllAccounts())*100) | number:'1.0-1'}}%</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- Search & Filters -->
+    <div class="flex flex-wrap items-center gap-3 mb-6">
+      <div class="flex items-center border rounded px-3 py-2 bg-gray-100 flex-1 min-w-[200px]">
+        <i class="fas fa-search text-gray-400 mr-2"></i>
+        <input type="text" placeholder="Search accounts..." [(ngModel)]="searchText"
+               class="bg-transparent outline-none w-full" />
+      </div>
 
+      <select class="border rounded px-3 py-2" [(ngModel)]="filterType">
+        <option value="all">All Types</option>
+        <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+      </select>
+
+      <select class="border rounded px-3 py-2" [(ngModel)]="filterStatus">
+        <option value="all">All Status</option>
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex space-x-2 mb-6">
+      <div class="px-4 py-2 rounded cursor-pointer border text-gray-700"
+           [ngClass]="{'font-semibold border-gray-800': currentTab==='accounts'}"
+           (click)="setTab('accounts')">Accounts List</div>
+      <div class="px-4 py-2 rounded cursor-pointer border text-gray-700"
+           [ngClass]="{'font-semibold border-gray-800': currentTab==='hierarchy'}"
+           (click)="setTab('hierarchy')">Account Hierarchy</div>
+      <div class="px-4 py-2 rounded cursor-pointer border text-gray-700"
+           [ngClass]="{'font-semibold border-gray-800': currentTab==='balances'}"
+           (click)="setTab('balances')">Account Balances</div>
+    </div>
+
+    <!-- Accounts Table -->
+    <div *ngIf="currentTab==='accounts'" class="overflow-x-auto">
+      <table class="min-w-full border border-gray-200">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="px-4 py-2 border text-left">Code</th>
+            <th class="px-4 py-2 border text-left">Name</th>
+            <th class="px-4 py-2 border text-left">Type</th>
+            <th class="px-4 py-2 border text-left">Sub-Type</th>
+            <th class="px-4 py-2 border text-left">Balance</th>
+            <th class="px-4 py-2 border text-left">Status</th>
+            <th class="px-4 py-2 border text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let acc of filteredAccounts" class="hover:bg-gray-50 transition">
+            <td class="px-4 py-2 border">{{ acc.account_code }}</td>
+            <td class="px-4 py-2 border">{{ acc.account_name }}</td>
+            <td class="px-4 py-2 border">{{ acc.type }}</td>
+            <td class="px-4 py-2 border">{{ acc.sub_type || '-' }}</td>
+            <td class="px-4 py-2 border">${{ acc.balance | number:'1.0-2' }}</td>
+            <td class="px-4 py-2 border">{{ acc.status }}</td>
+            <td class="px-4 py-2 border flex space-x-1">
+              <button class="px-2 py-1 border rounded hover:bg-gray-200" (click)="editAccount(acc.id)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="px-2 py-1 border rounded hover:bg-gray-200" (click)="deleteAccount(acc.id)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button class="px-2 py-1 border rounded hover:bg-gray-200" (click)="toggleAccountStatus(acc.id)">
+                <i class="fas fa-exchange-alt"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- Add / Edit Account Modal -->
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+     *ngIf="showAddModal">
+  <div class="bg-white rounded-lg shadow w-full max-w-lg p-6 relative">
+    <h2 class="text-xl font-bold mb-4">{{ editMode ? 'Edit Account' : 'Add Account' }}</h2>
+
+    <form (ngSubmit)="saveNewAccount()" class="space-y-4">
+      <div>
+        <label class="block mb-1">Account Code</label>
+        <input type="text" [(ngModel)]="newAccount.account_code" name="account_code"
+               class="w-full border px-3 py-2 rounded" required>
+      </div>
+      <div>
+        <label class="block mb-1">Account Name</label>
+        <input type="text" [(ngModel)]="newAccount.account_name" name="account_name"
+               class="w-full border px-3 py-2 rounded" required>
+      </div>
+      <div>
+        <label class="block mb-1">Type</label>
+        <select [(ngModel)]="newAccount.type" name="type" class="w-full border px-3 py-2 rounded">
+          <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="block mb-1">Sub-Type</label>
+        <input type="text" [(ngModel)]="newAccount.sub_type" name="sub_type" class="w-full border px-3 py-2 rounded">
+      </div>
+      <div>
+        <label class="block mb-1">Balance</label>
+        <input type="number" [(ngModel)]="newAccount.balance" name="balance" class="w-full border px-3 py-2 rounded">
+      </div>
+      <div>
+        <label class="block mb-1">Status</label>
+        <select [(ngModel)]="newAccount.status" name="status" class="w-full border px-3 py-2 rounded">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div class="flex justify-end space-x-2 mt-4">
+        <button type="button" (click)="closeModal()" class="px-4 py-2 border rounded hover:bg-gray-200">Cancel</button>
+        <button type="submit" class="px-4 py-2 border rounded hover:bg-gray-200">Save</button>
+      </div>
+    </form>
+
+    <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" (click)="closeModal()">
+      &times;
+    </button>
+  </div>
 </div>

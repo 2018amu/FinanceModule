@@ -1,12 +1,12 @@
-com\company\dashboard\DashboardController.class
 com\company\dashboard\DashboardData.class
 com\company\dashboard\DashboardData$PendingAction.class
 com\company\HelloController.class
 com\company\HelloController$Result.class
-com\company\AppConfig.class
 com\company\dashboard\DashboardData$Card.class
+com\company\dashboard\DashboardService.class
+com\company\dashboard\PendingActionRepository.class
+com\company\dashboard\DashboardController.class
+com\company\AppConfig.class
 com\company\config\CorsConfig.class
 com\company\dashboard\CardRepository.class
-com\company\dashboard\DashboardService.class
 com\company\App.class
-com\company\dashboard\PendingActionRepository.class
