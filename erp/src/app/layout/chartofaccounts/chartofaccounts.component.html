@@ -6,14 +6,14 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold flex items-center text-gray-800">
-        <i class="fas fa-list-alt mr-2"></i> Chart of Accounts
+        <i class="fas fa-list-alt mr-2 text-blue-600"></i> Chart of Accounts
       </h2>
       <div class="flex space-x-3">
-        <button class="flex items-center bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700"
+        <button class="flex items-center bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                 (click)="addAccount()">
           <i class="fas fa-plus mr-2"></i> Add Account
         </button>
-        <button class="flex items-center bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500"
+        <button class="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
                 (click)="exportCOA()">
           <i class="fas fa-file-export mr-2"></i> Export
         </button>
@@ -43,20 +43,20 @@
     <!-- Tabs -->
     <div class="flex space-x-2 mb-6">
       <div class="px-4 py-2 rounded cursor-pointer border text-gray-700"
-           [ngClass]="{'font-semibold border-gray-800': currentTab==='accounts'}"
+           [ngClass]="{'font-semibold border-blue-600 text-blue-600': currentTab==='accounts'}"
            (click)="setTab('accounts')">Accounts List</div>
       <div class="px-4 py-2 rounded cursor-pointer border text-gray-700"
-           [ngClass]="{'font-semibold border-gray-800': currentTab==='hierarchy'}"
+           [ngClass]="{'font-semibold border-blue-600 text-blue-600': currentTab==='hierarchy'}"
            (click)="setTab('hierarchy')">Account Hierarchy</div>
       <div class="px-4 py-2 rounded cursor-pointer border text-gray-700"
-           [ngClass]="{'font-semibold border-gray-800': currentTab==='balances'}"
+           [ngClass]="{'font-semibold border-blue-600 text-blue-600': currentTab==='balances'}"
            (click)="setTab('balances')">Account Balances</div>
     </div>
 
     <!-- Accounts Table -->
     <div *ngIf="currentTab==='accounts'" class="overflow-x-auto">
-      <table class="min-w-full border border-gray-200">
-        <thead class="bg-gray-100">
+      <table class="min-w-full border border-gray-200 rounded-lg">
+        <thead class="bg-blue-50 text-blue-700">
           <tr>
             <th class="px-4 py-2 border text-left">Code</th>
             <th class="px-4 py-2 border text-left">Name</th>
@@ -68,22 +68,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let acc of filteredAccounts" class="hover:bg-gray-50 transition">
+          <tr *ngFor="let acc of filteredAccounts" class="hover:bg-blue-50 transition">
             <td class="px-4 py-2 border">{{ acc.account_code }}</td>
             <td class="px-4 py-2 border">{{ acc.account_name }}</td>
             <td class="px-4 py-2 border">{{ acc.type }}</td>
             <td class="px-4 py-2 border">{{ acc.sub_type || '-' }}</td>
-            <td class="px-4 py-2 border">${{ acc.balance | number:'1.0-2' }}</td>
+            <td class="px-4 py-2 border text-green-600 font-semibold">${{ acc.balance | number:'1.0-2' }}</td>
             <td class="px-4 py-2 border">{{ acc.status }}</td>
             <td class="px-4 py-2 border flex space-x-1">
-              <button class="px-2 py-1 border rounded hover:bg-gray-200" (click)="editAccount(acc.id)">
-                <i class="fas fa-edit"></i>
+              <button class="px-2 py-1 border rounded bg-blue-100 hover:bg-blue-200 transition" (click)="editAccount(acc.id)">
+                <i class="fas fa-edit text-blue-700"></i>
               </button>
-              <button class="px-2 py-1 border rounded hover:bg-gray-200" (click)="deleteAccount(acc.id)">
-                <i class="fas fa-trash-alt"></i>
+              <button class="px-2 py-1 border rounded bg-blue-100 hover:bg-blue-200 transition" (click)="deleteAccount(acc.id)">
+                <i class="fas fa-trash-alt text-blue-700"></i>
               </button>
-              <button class="px-2 py-1 border rounded hover:bg-gray-200" (click)="toggleAccountStatus(acc.id)">
-                <i class="fas fa-exchange-alt"></i>
+              <button class="px-2 py-1 border rounded bg-blue-100 hover:bg-blue-200 transition" (click)="toggleAccountStatus(acc.id)">
+                <i class="fas fa-exchange-alt text-blue-700"></i>
               </button>
             </td>
           </tr>
@@ -97,49 +97,61 @@
 <!-- Add / Edit Account Modal -->
 <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
      *ngIf="showAddModal">
-  <div class="bg-white rounded-lg shadow w-full max-w-lg p-6 relative">
-    <h2 class="text-xl font-bold mb-4">{{ editMode ? 'Edit Account' : 'Add Account' }}</h2>
+  <div class="bg-white rounded-lg shadow w-full max-w-md p-6 relative">
+    <h2 class="text-xl font-bold mb-4 text-blue-700">{{ editMode ? 'Edit Account' : 'Add Account' }}</h2>
 
-    <form (ngSubmit)="saveNewAccount()" class="space-y-4">
+    <form (ngSubmit)="saveNewAccount()" class="space-y-3">
+
       <div>
-        <label class="block mb-1">Account Code</label>
+        <label class="block mb-1 font-medium">Account Code</label>
         <input type="text" [(ngModel)]="newAccount.account_code" name="account_code"
-               class="w-full border px-3 py-2 rounded" required>
+               class="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" required>
       </div>
+
       <div>
-        <label class="block mb-1">Account Name</label>
+        <label class="block mb-1 font-medium">Account Name</label>
         <input type="text" [(ngModel)]="newAccount.account_name" name="account_name"
-               class="w-full border px-3 py-2 rounded" required>
+               class="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" required>
       </div>
+
       <div>
-        <label class="block mb-1">Type</label>
-        <select [(ngModel)]="newAccount.type" name="type" class="w-full border px-3 py-2 rounded">
+        <label class="block mb-1 font-medium">Type</label>
+        <select [(ngModel)]="newAccount.type" name="type"
+                class="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300 outline-none">
           <option *ngFor="let t of types" [value]="t">{{ t }}</option>
         </select>
       </div>
+
       <div>
-        <label class="block mb-1">Sub-Type</label>
-        <input type="text" [(ngModel)]="newAccount.sub_type" name="sub_type" class="w-full border px-3 py-2 rounded">
+        <label class="block mb-1 font-medium">Sub-Type</label>
+        <input type="text" [(ngModel)]="newAccount.sub_type" name="sub_type"
+               class="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300 outline-none">
       </div>
+
       <div>
-        <label class="block mb-1">Balance</label>
-        <input type="number" [(ngModel)]="newAccount.balance" name="balance" class="w-full border px-3 py-2 rounded">
+        <label class="block mb-1 font-medium">Balance</label>
+        <input type="number" [(ngModel)]="newAccount.balance" name="balance"
+               class="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300 outline-none">
       </div>
+
       <div>
-        <label class="block mb-1">Status</label>
-        <select [(ngModel)]="newAccount.status" name="status" class="w-full border px-3 py-2 rounded">
+        <label class="block mb-1 font-medium">Status</label>
+        <select [(ngModel)]="newAccount.status" name="status"
+                class="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-blue-300 outline-none">
           <option value="Active">Active</option>
           <option value="Inactive">Inactive</option>
         </select>
       </div>
 
-      <div class="flex justify-end space-x-2 mt-4">
-        <button type="button" (click)="closeModal()" class="px-4 py-2 border rounded hover:bg-gray-200">Cancel</button>
-        <button type="submit" class="px-4 py-2 border rounded hover:bg-gray-200">Save</button>
+      <div class="flex justify-end space-x-2 mt-3">
+        <button type="button" (click)="closeModal()"
+                class="px-4 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition">Cancel</button>
+        <button type="submit"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">{{ editMode ? 'Update' : 'Save' }}</button>
       </div>
     </form>
 
-    <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" (click)="closeModal()">
+    <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl" (click)="closeModal()">
       &times;
     </button>
   </div>

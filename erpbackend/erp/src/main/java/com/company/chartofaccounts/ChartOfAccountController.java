@@ -39,29 +39,37 @@ public class ChartOfAccountController {
         return ResponseEntity.ok(existing.get());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
-        Optional<ChartOfAccount> existing = service.getAccountOptionalById(id);
-        if (!existing.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-        service.deleteAccount(id);
-        return ResponseEntity.ok().build();
-    }
-
     @PutMapping("/{id}")
-    public ChartOfAccount updateAccount(@PathVariable Long id, @RequestBody ChartOfAccount updatedAccount) {
-        ChartOfAccount existing = service.getAccountById(id);
-        if (existing == null)
-            throw new RuntimeException("Account not found with ID: " + id);
+    public ResponseEntity<?> updateAccount(@PathVariable("id") Long id, @RequestBody ChartOfAccount updatedAccount) {
+        try {
+            ChartOfAccount existing = service.getAccountById(id);
+            if (existing == null)
+                throw new RuntimeException("Account not found with ID: " + id);
 
-        existing.setAccountCode(updatedAccount.getAccountCode());
-        existing.setAccountName(updatedAccount.getAccountName());
-        existing.setType(updatedAccount.getType());
-        existing.setSubType(updatedAccount.getSubType());
-        existing.setBalance(updatedAccount.getBalance());
-        existing.setStatus(updatedAccount.getStatus());
+            existing.setAccountCode(updatedAccount.getAccountCode());
+            existing.setAccountName(updatedAccount.getAccountName());
+            existing.setType(updatedAccount.getType());
+            existing.setSubType(updatedAccount.getSubType());
+            existing.setBalance(updatedAccount.getBalance());
+            existing.setStatus(updatedAccount.getStatus());
 
-        return service.saveAccount(existing);
+            ChartOfAccount saved = service.saveAccount(existing);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            e.printStackTrace(); // prints stack trace to server console
+            return ResponseEntity.status(500).body("Update failed: " + e.getMessage());
+        }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAccount(@PathVariable("id") Long id) {
+        try {
+            service.deleteAccount(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace(); // prints stack trace to server console
+            return ResponseEntity.status(500).body("Delete failed: " + e.getMessage());
+        }
+    }
+
 }
