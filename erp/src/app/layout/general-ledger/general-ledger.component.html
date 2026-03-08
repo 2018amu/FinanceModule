@@ -7,23 +7,41 @@
       </h2>
       <div class="section-actions flex gap-2">
         <button
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2"
-          onclick="showModal('journalEntryModal')"
-        >
-          <i class="fas fa-plus"></i> Add Journal Entry
+        class="bg-blue-600 ..."
+        (click)="showJournalEntryModal()"
+      >
+        <i class="fas fa-plus"></i> Add Journal Entry
+      </button>
+      <div *ngIf="showJournalForm" class="p-4 border rounded my-4 bg-gray-50">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input type="text" placeholder="Journal No" [(ngModel)]="newJournal.no" class="border p-2 rounded">
+          <input type="date" [(ngModel)]="newJournal.date" class="border p-2 rounded">
+          <input type="text" placeholder="Description" [(ngModel)]="newJournal.description" class="border p-2 rounded">
+          <input type="number" placeholder="Debit" [(ngModel)]="newJournal.debit" class="border p-2 rounded">
+          <input type="number" placeholder="Credit" [(ngModel)]="newJournal.credit" class="border p-2 rounded">
+          <select [(ngModel)]="newJournal.status" class="border p-2 rounded">
+            <option value="Draft">Draft</option>
+            <option value="Posted">Posted</option>
+          </select>
+        </div>
+        <button class="mt-2 bg-green-600 text-white px-4 py-2 rounded" (click)="submitJournal()">
+          Save Journal
         </button>
-        <button
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center gap-2"
-          onclick="postAllEntries()"
-        >
-          <i class="fas fa-check-circle"></i> Post All Entries
-        </button>
-        <button
-          class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded flex items-center gap-2"
-          onclick="runMonthEndClose()"
-        >
-          <i class="fas fa-calendar-check"></i> Month-End Close
-        </button>
+      </div>
+      
+      <button
+        class="bg-green-600 ..."
+        (click)="postAllEntries()"
+      >
+        <i class="fas fa-check-circle"></i> Post All Entries
+      </button>
+      
+      <button
+        class="bg-teal-600 ..."
+        (click)="runMonthEndClose()"
+      >
+        <i class="fas fa-calendar-check"></i> Month-End Close
+      </button>
       </div>
     </div>
 
