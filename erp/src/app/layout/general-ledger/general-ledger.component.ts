@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { GlService } from '../../services/general-ledger.service';
 
 export type TabName = 'journals' | 'trialbalance' | 'ledger' | 'closing';
@@ -8,12 +8,11 @@ export type TabName = 'journals' | 'trialbalance' | 'ledger' | 'closing';
 @Component({
   selector: 'app-general-ledger',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './general-ledger.component.html',
-  styleUrls: ['./general-ledger.component.css']
+  styleUrls: ['./general-ledger.component.css'],
 })
 export class GeneralLedgerComponent implements OnInit {
-
   constructor(private glService: GlService) {}
 
   ngOnInit(): void {
@@ -22,76 +21,196 @@ export class GeneralLedgerComponent implements OnInit {
     this.loadLedger();
   }
 
+  /* ---------------------------
+     NEW JOURNAL FORM
+  --------------------------- */
+
   newJournal = {
-    no: '',
+    journalNo: '',
     date: '',
     description: '',
     debit: 0,
     credit: 0,
-    status: 'Draft'
+    status: 'Draft',
   };
-  
+
   showJournalForm = false;
-  
+
   toggleJournalForm() {
     this.showJournalForm = !this.showJournalForm;
   }
-  
-  submitJournal() {
-    this.glService.addJournal(this.newJournal).subscribe(res => {
-      this.journals.push(res);
-      this.filteredJournals.push(res);
-      this.newJournal = { no: '', date: '', description: '', debit: 0, credit: 0, status: 'Draft' };
-      this.showJournalForm = false;
-    });
-  }
-  addJournal() {
-    if (!this.newJournal.no || !this.newJournal.date) {
-      alert('Journal No and Date are required');
-      return;
+
+  viewJournalEntry(id: number) {
+    const journal = this.journals.find((j) => j.id === id);
+    if (journal) {
+      // Example: Show in console or open modal
+      console.log('Viewing Journal:', journal);
+      this.showJournalForm = true;
+      this.newJournal = { ...journal };
+      this.currentStep = 2; // fill form with selected journal data if needed
     }
-
-    this.glService.addJournal(this.newJournal).subscribe(
-      res => {
-        // Update table
-        this.journals.push(res);
-        this.filteredJournals.push(res);
-
-        // Reset form
-        this.newJournal = { no: '', date: '', description: '', debit: 0, credit: 0, status: 'Draft' };
-        this.showJournalForm = false;
-      },
-      err => {
-        console.error('Failed to add journal', err);
-        alert('Error adding journal. Check console for details.');
-      }
-    );
   }
 
-  filterJournals() {
-
-    const statusFilter =
-      (document.getElementById('journalStatusFilter') as HTMLSelectElement)?.value;
   
-    const dateFilter =
-      (document.getElementById('journalDateFilter') as HTMLInputElement)?.value;
-  
-    this.filteredJournals = this.journals.filter(j => {
-  
-      const statusMatch =
-        statusFilter === 'all' || j.status === statusFilter;
-  
-      const dateMatch =
-        !dateFilter || j.date === dateFilter;
-  
-      return statusMatch && dateMatch;
+  approveJournalEntry(id: number) {
+    this.glService.approveJournal(id).subscribe({
+      next: (res: any) => {
+        const index = this.journals.findIndex(j => j.id === id);
+        if (index !== -1) this.journals[index].status = 'Approved';
+        this.filteredJournals = [...this.journals];
+        this.currentStep = 3; // Move step to Approve
+      },
+      error: (err) => {
+        console.error('Failed to approve journal:', err);
+        alert('Failed to approve journal. Check console.');
+      }
     });
+  }
   
+  postJournalEntry(id: number) {
+    this.glService.postJournal(id).subscribe({
+      next: (res: any) => {
+        const index = this.journals.findIndex(j => j.id === id);
+        if (index !== -1) this.journals[index].status = 'Posted';
+        this.filteredJournals = [...this.journals];
+        this.currentStep = 4; // Move step to Post
+      },
+      error: (err) => {
+        console.error('Failed to post journal:', err);
+        alert('Failed to post journal. Check console.');
+      }
+    });
+  }
+
+  isSaving = false;
+  startJournal() {
+    this.showJournalForm = true;
+    this.currentStep = 1;
+  }
+
+  submitJournal() {
+    if (this.isSaving) return; // prevent double click
+
+    this.isSaving = true;
+
+    this.glService.addJournal(this.newJournal).subscribe({
+      next: (res: any) => {
+        this.journals.push(res);
+        this.filteredJournals = [...this.journals];
+
+        this.newJournal = {
+          journalNo: '',
+          date: '',
+          description: '',
+          debit: 0,
+          credit: 0,
+          status: 'Draft',
+        };
+
+        this.showJournalForm = false;
+        this.isSaving = false;
+        // move to review step
+        this.currentStep = 2;
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Failed to save journal');
+        this.isSaving = false;
+      },
+    });
   }
 
   /* ---------------------------
-     WORKFLOW STEPS
+     JOURNALS TABLE
   --------------------------- */
+
+  journals: any[] = [];
+  filteredJournals: any[] = [];
+
+  journalSearchText = '';
+  journalStatusFilter = 'all';
+  journalDateFilter = '';
+
+  loadJournals() {
+    this.glService.getJournals().subscribe({
+      next: (data: any[]) => {
+        console.log('Journal API Data:', data);
+
+        this.journals = data;
+        this.filteredJournals = [...data];
+      },
+
+      error: (err) => {
+        console.error('Journal API Error:', err);
+      },
+    });
+  }
+
+  searchJournals(event: Event) {
+    this.journalSearchText = (event.target as HTMLInputElement).value.toLowerCase();
+
+    this.applyJournalFilters();
+  }
+
+  filterJournals() {
+    this.journalStatusFilter = (
+      document.getElementById('journalStatusFilter') as HTMLSelectElement
+    )?.value;
+
+    this.journalDateFilter = (
+      document.getElementById('journalDateFilter') as HTMLInputElement
+    )?.value;
+
+    this.applyJournalFilters();
+  }
+
+  applyJournalFilters() {
+    this.filteredJournals = this.journals.filter((j) => {
+      const searchMatch =
+        j.no?.toLowerCase().includes(this.journalSearchText) ||
+        j.description?.toLowerCase().includes(this.journalSearchText);
+
+      const statusMatch =
+        this.journalStatusFilter === 'all' || j.status === this.journalStatusFilter;
+
+      const dateMatch = !this.journalDateFilter || j.date === this.journalDateFilter;
+
+      return searchMatch && statusMatch && dateMatch;
+    });
+  }
+
+  // Count of Draft journals
+
+  get totalJournalsCount(): number {
+    return this.journals.length;
+  }
+
+  get draftJournalsCount(): number {
+    return this.journals.filter((j) => j.status === 'Draft').length;
+  }
+
+  get thisMonthJournalsCount(): number {
+    const now = new Date();
+    return this.journals.filter((j) => {
+      const date = new Date(j.date);
+      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+    }).length;
+  }
+
+  get debitCreditBalance(): { debit: number; credit: number } {
+    const debit = this.journals.reduce((sum, j) => sum + j.debit, 0);
+    const credit = this.journals.reduce((sum, j) => sum + j.credit, 0);
+    return { debit, credit };
+  }
+  // Calculate total debit
+  totalDebit(): number {
+    return this.journals.reduce((sum, j) => sum + (j.debit || 0), 0);
+  }
+
+  // Calculate total credit
+  totalCredit(): number {
+    return this.journals.reduce((sum, j) => sum + (j.credit || 0), 0);
+  }
 
   currentStep = 1;
 
@@ -99,7 +218,7 @@ export class GeneralLedgerComponent implements OnInit {
     { label: 'Create Entry', icon: 'fas fa-plus' },
     { label: 'Review', icon: 'fas fa-eye' },
     { label: 'Approve', icon: 'fas fa-check' },
-    { label: 'Post to GL', icon: 'fas fa-book' }
+    { label: 'Post to GL', icon: 'fas fa-book' },
   ];
 
   nextStep() {
@@ -115,9 +234,10 @@ export class GeneralLedgerComponent implements OnInit {
   }
 
   goToStep(step: number) {
-    this.currentStep = step;
+    if (step >= 1 && step <= this.steps.length) {
+      this.currentStep = step;
+    }
   }
-
 
   /* ---------------------------
      TABS
@@ -129,7 +249,7 @@ export class GeneralLedgerComponent implements OnInit {
     { name: 'journals', label: 'Journal Entries' },
     { name: 'trialbalance', label: 'Trial Balance' },
     { name: 'ledger', label: 'Ledger Details' },
-    { name: 'closing', label: 'Period Closing' }
+    { name: 'closing', label: 'Period Closing' },
   ];
 
   setTab(tab: TabName) {
@@ -142,60 +262,6 @@ export class GeneralLedgerComponent implements OnInit {
       : 'text-gray-600 hover:text-indigo-500';
   }
 
-
-  /* ---------------------------
-     JOURNALS
-  --------------------------- */
-
-  journals: any[] = [];
-  filteredJournals: any[] = [];
-
-  journalSearchText = '';
-  journalStatusFilter = 'all';
-  journalDateFilter = '';
-
-  loadJournals() {
-    this.glService.getJournals().subscribe((data: any[]) => {
-      this.journals = data;
-      this.filteredJournals = [...this.journals];
-    });
-  }
-
-  searchJournals(event: Event) {
-    this.journalSearchText = (event.target as HTMLInputElement).value.toLowerCase();
-    this.applyJournalFilters();
-  }
-
-  updateStatusFilter(status: string) {
-    this.journalStatusFilter = status;
-    this.applyJournalFilters();
-  }
-
-  updateDateFilter(date: string) {
-    this.journalDateFilter = date;
-    this.applyJournalFilters();
-  }
-
-  applyJournalFilters() {
-    this.filteredJournals = this.journals.filter(j => {
-
-      const searchMatch =
-        j.no.toLowerCase().includes(this.journalSearchText) ||
-        j.description.toLowerCase().includes(this.journalSearchText);
-
-      const statusMatch =
-        this.journalStatusFilter === 'all' ||
-        j.status === this.journalStatusFilter;
-
-      const dateMatch =
-        !this.journalDateFilter ||
-        j.date === this.journalDateFilter;
-
-      return searchMatch && statusMatch && dateMatch;
-    });
-  }
-
-
   /* ---------------------------
      TRIAL BALANCE
   --------------------------- */
@@ -203,24 +269,34 @@ export class GeneralLedgerComponent implements OnInit {
   trialBalance: any[] = [];
 
   loadTrialBalance() {
-    this.glService.getTrialBalance().subscribe((data: any[]) => {
-      this.trialBalance = data;
+    this.glService.getTrialBalance().subscribe({
+      next: (data: any[]) => {
+        this.trialBalance = data;
+      },
+
+      error: (err) => {
+        console.error('Trial balance error:', err);
+      },
     });
   }
 
-
   /* ---------------------------
-     LEDGER DETAILS
+     LEDGER
   --------------------------- */
 
   ledgerEntries: any[] = [];
 
   loadLedger() {
-    this.glService.getLedgerEntries().subscribe((data: any[]) => {
-      this.ledgerEntries = data;
+    this.glService.getLedgerEntries().subscribe({
+      next: (data: any[]) => {
+        this.ledgerEntries = data;
+      },
+
+      error: (err) => {
+        console.error('Ledger error:', err);
+      },
     });
   }
-
 
   /* ---------------------------
      PERIOD CLOSING
@@ -228,29 +304,14 @@ export class GeneralLedgerComponent implements OnInit {
 
   closingInfo = {
     period: '',
-    status: 'Open'
+    status: 'Open',
   };
-  showJournalEntryModal() {
-    // implement modal logic here or use Angular Material / ngx-bootstrap modal
-    console.log('Show Journal Entry Modal');
-  }
-  
+
   postAllEntries() {
-    // call backend API to post all journals
     console.log('Posting all entries...');
   }
-  
+
   runMonthEndClose() {
-    // call backend API to close period
     console.log('Running month-end close...');
   }
-
-  runClosingProcess() {
-    this.glService.runClosing(this.closingInfo).subscribe(() => {
-      alert('Closing process completed');
-    });
-  }
-
-  
-
 }

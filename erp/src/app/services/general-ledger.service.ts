@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 export interface JournalEntry {
   id: number;
   date: string;
-  journal_no: string;
+  journalNo: string;
   description: string;
   debit: number;
   credit: number;
@@ -23,7 +23,7 @@ export interface TrialBalanceRow {
 export interface LedgerEntry {
   date: string;
   account: string;
-  journal_no: string;
+  journalNo: string;
   debit: number;
   credit: number;
   balance: number;
@@ -65,5 +65,14 @@ export class GlService {
 
   addJournal(journal: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/journals`, journal);
+  }
+  
+  approveJournal(id: number) {
+    
+    return this.http.put(`${this.apiUrl}/journals/approve/${id}`, null);
+  }
+  
+  postJournal(id: number) {
+    return this.http.put(`${this.apiUrl}/journals/post/${id}`, null);
   }
 }

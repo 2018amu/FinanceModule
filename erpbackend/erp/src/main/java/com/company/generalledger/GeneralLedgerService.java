@@ -25,5 +25,11 @@ public class GeneralLedgerService {
     public List<GeneralLedger> getLedgerEntries() {
         return repository.findAll();
     }
+    public GeneralLedger getJournalById(Long id) {
+
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Journal not found with id: " + id));
+    }
+    
 
 }
