@@ -3,7 +3,9 @@ com\company\generalledger\GeneralLedger.class
 com\company\dashboard\DashboardData.class
 com\company\generalledger\GeneralLedgerRepository.class
 com\company\dashboard\DashboardData$PendingAction.class
+com\company\domain\DomainRepository.class
 com\company\HelloController.class
+com\company\domain\Domain.class
 com\company\HelloController$Result.class
 com\company\dashboard\DashboardData$Card.class
 com\company\chartofaccounts\ChartOfAccountService.class
@@ -12,6 +14,8 @@ com\company\dashboard\PendingActionRepository.class
 com\company\generalledger\GeneralLedgerService.class
 com\company\dashboard\DashboardController.class
 com\company\AppConfig.class
+com\company\domain\DomainController.class
+com\company\domain\DomainService.class
 com\company\chartofaccounts\ChartOfAccountController.class
 com\company\generalledger\GeneralLedgerController.class
 com\company\config\CorsConfig.class

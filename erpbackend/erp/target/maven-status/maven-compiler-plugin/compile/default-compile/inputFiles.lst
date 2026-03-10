@@ -1,6 +1,9 @@
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\dashboard\CardRepository.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\domain\Domain.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\domain\DomainRepository.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\config\CorsConfig.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\App.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\domain\DomainController.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\dashboard\DashboardController.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\dashboard\DashboardService.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\HelloController.java
@@ -9,6 +12,7 @@ C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\chartofaccou
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\dashboard\DashboardData.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\AppConfig.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\generalledger\GeneralLedgerController.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\domain\DomainService.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\chartofaccounts\ChartOfAccountController.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\dashboard\PendingActionRepository.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\generalledger\GeneralLedger.java

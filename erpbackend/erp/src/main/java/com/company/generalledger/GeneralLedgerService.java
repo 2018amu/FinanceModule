@@ -2,6 +2,7 @@ package com.company.generalledger;
 
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,6 +30,19 @@ public class GeneralLedgerService {
 
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Journal not found with id: " + id));
+    }
+    @Transactional
+    public List<GeneralLedger> runMonthEndClose() {
+        // 1. Get all Posted journals
+        List<GeneralLedger> postedJournals = repository.findByStatus("Posted");
+
+        // 2. Mark them as Closed
+        for (GeneralLedger j : postedJournals) {
+            j.setStatus("Closed");
+        }
+
+        // 3. Save changes
+        return repository.saveAll(postedJournals);
     }
     
 

@@ -57,4 +57,15 @@ public class GeneralLedgerController {
     public List<GeneralLedger> getLedger() {
         return service.getLedgerEntries();
     }
+
+    @PostMapping("/month-end-close")
+    public ResponseEntity<?> runMonthEndClose() {
+        List<GeneralLedger> closedJournals = service.runMonthEndClose();
+
+        if (closedJournals.isEmpty()) {
+            return ResponseEntity.ok("No Posted journals to close.");
+        }
+
+        return ResponseEntity.ok(closedJournals);
+    }
 }

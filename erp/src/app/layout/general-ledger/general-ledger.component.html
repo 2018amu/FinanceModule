@@ -278,7 +278,7 @@ class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-5
         
         <tbody>
         
-        <tr *ngFor="let j of filteredJournals"
+        <tr *ngFor="let j of filteredJournals;trackBy: trackById"
         class="border-b hover:bg-gray-100 transition">
         
         <td class="p-3">{{ j.date }}</td>
@@ -314,7 +314,7 @@ class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-5
          <!-- Actions Column -->
   <td class="px-6 py-4 flex gap-2">
 
-    <!-- View Button -->
+    
   <!-- View Button -->
 <button
   class="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition"
@@ -324,20 +324,20 @@ class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-5
 
 <!-- Approve Button -->
 <button
+  type="button"
   class="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-green-50 hover:text-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-  (click)="approveJournalEntry(j.id)" >
-  <!-- [disabled]="j.status === 'Approved' || j.status === 'Posted'" -->
- 
+  (click)="approveJournalEntry(j.id)"
+  [disabled]="j.status === 'Approved'">
+
   <i class="fas fa-check"></i>
 </button>
-
 <!-- Post Button -->
-<button
+<!-- <button
   class="px-3 py-1 rounded border border-gray-300 text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
   (click)="postJournalEntry(j.id)">
-  <!-- [disabled]="j.status === 'Posted' || j.status === 'Draft'"> -->
+  
   <i class="fas fa-book"></i>
-</button>
+</button> -->
   </td>
         
         </tr>

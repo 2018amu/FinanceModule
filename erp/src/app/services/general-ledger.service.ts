@@ -75,4 +75,8 @@ export class GlService {
   postJournal(id: number) {
     return this.http.put(`${this.apiUrl}/journals/post/${id}`, null);
   }
+  runMonthEndClose() {
+    return this.http.post('http://localhost:8080/api/gl/month-end-close', {});
+  }
+  
 }

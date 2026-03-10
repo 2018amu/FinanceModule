@@ -52,34 +52,83 @@ export class GeneralLedgerComponent implements OnInit {
   }
 
   
+  
+
   approveJournalEntry(id: number) {
     this.glService.approveJournal(id).subscribe({
-      next: (res: any) => {
-        const index = this.journals.findIndex(j => j.id === id);
-        if (index !== -1) this.journals[index].status = 'Approved';
+      next: () => {
+  
+        const journal = this.journals.find(j => j.id === id);
+  
+        if (journal) {
+          journal.status = 'Approved';
+        }
+  
         this.filteredJournals = [...this.journals];
-        this.currentStep = 3; // Move step to Approve
+        this.currentStep = 3;
+  
       },
       error: (err) => {
         console.error('Failed to approve journal:', err);
-        alert('Failed to approve journal. Check console.');
       }
     });
   }
+
+  runMonthEndClose() {
+
+    // 1️⃣ Check if there are any Posted journals to close
+    const postedJournals = this.journals.filter(j => j.status === 'Posted');
   
-  postJournalEntry(id: number) {
-    this.glService.postJournal(id).subscribe({
+    if (postedJournals.length === 0) {
+      alert('No posted journals available to close for this month.');
+      return;
+    }
+  
+    // 2️⃣ Optional: Confirm with user
+    const confirmed = confirm('Are you sure you want to run Month-End Close? This action cannot be undone.');
+    if (!confirmed) return;
+  
+    // 3️⃣ Call backend API to close month
+    this.glService.runMonthEndClose().subscribe({
       next: (res: any) => {
-        const index = this.journals.findIndex(j => j.id === id);
-        if (index !== -1) this.journals[index].status = 'Posted';
+  
+        // 4️⃣ Update UI: mark all journals as 'Closed' (optional)
+        postedJournals.forEach(journal => {
+          journal.status = 'Closed';
+        });
+  
+        // Refresh table
         this.filteredJournals = [...this.journals];
-        this.currentStep = 4; // Move step to Post
+  
+        // Update workflow step
+        this.currentStep = 4;
+  
+        alert('Month-End Close completed successfully.');
       },
       error: (err) => {
-        console.error('Failed to post journal:', err);
-        alert('Failed to post journal. Check console.');
+        console.error('Month-End Close failed:', err);
+        alert('Failed to run Month-End Close. Check console.');
       }
     });
+  
+  }
+  // postJournalEntry(id: number) {
+  //   this.glService.postJournal(id).subscribe({
+  //     next: (res: any) => {
+  //       const index = this.journals.findIndex(j => j.id === id);
+  //       if (index !== -1) this.journals[index].status = 'Posted';
+  //       this.filteredJournals = [...this.journals];
+  //       this.currentStep = 4; // Move step to Post
+  //     },
+  //     error: (err) => {
+  //       console.error('Failed to post journal:', err);
+  //       alert('Failed to post journal. Check console.');
+  //     }
+  //   });
+  // }
+
+  trackById(index: number, item: any) {
+    return item.id;
   }
 
   isSaving = false;
@@ -308,10 +357,26 @@ export class GeneralLedgerComponent implements OnInit {
   };
 
   postAllEntries() {
-    console.log('Posting all entries...');
+
+    const approvedJournals = this.journals.filter(j => j.status === 'Approved');
+  
+    if (approvedJournals.length === 0) {
+      alert('No approved journals to post.');
+      return;
+    }
+  
+    approvedJournals.forEach(journal => {
+      journal.status = 'Posted';
+    });
+  
+    // refresh table
+    this.filteredJournals = [...this.journals];
+  
+    // move workflow step to Posted
+    this.currentStep = 4;
+  
+    alert('All approved journal entries are posted.');
   }
 
-  runMonthEndClose() {
-    console.log('Running month-end close...');
-  }
+ 
 }
