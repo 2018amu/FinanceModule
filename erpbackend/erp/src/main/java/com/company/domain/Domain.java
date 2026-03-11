@@ -16,7 +16,7 @@ public class Domain {
     private String keyAccounts;
     private String apFocus;
 
-    private boolean applies = false; // NEW FIELD
+    private boolean applies = false; 
 
     // Getters and Setters
     public Long getId() { return id; }

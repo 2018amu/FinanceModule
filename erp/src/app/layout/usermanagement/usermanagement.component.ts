@@ -1,69 +1,156 @@
-import { Component } from '@angular/core';
-import {CommonModule} from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { UserService, User } from '../../services/user.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-usermanagement',
-  standalone:true,
-  imports: [CommonModule],
+  selector: 'app-users',
+  standalone: true,
+  imports: [CommonModule,FormsModule],
   templateUrl: './usermanagement.component.html',
-  styleUrl: './usermanagement.component.css',
 })
-export class UsermanagementComponent {
-  currentTab: string = 'userslist';
+export class UserComponent implements OnInit {
+  users: User[] = [];
+  newUser: any = {
+    userId: '',
+    fullName: '',
+    email: '',
+    role: '',
+    department: '',
+    status: 'Active'
+  };
 
-  roles = ['Administrator', 'Accountant', 'Manager', 'Auditor'];
+  totalUsers = 0;
+  activeUsers = 0;
+  inactiveUsers = 0;
+  roleCount = 0;
+  activeTab = 'userslist';
 
-  users = [
-    {
-      id: 'USR001',
-      fullName: 'Admin User',
-      email: 'admin@company.com',
-      role: 'Administrator',
-      department: 'Finance',
-      lastLogin: '2023-10-31 09:15',
-      status: 'Active'
-    },
-    {
-      id: 'USR002',
-      fullName: 'John Smith',
-      email: 'john.smith@company.com',
-      role: 'Accountant',
-      department: 'Finance',
-      lastLogin: '2023-10-30 14:30',
-      status: 'Active'
+  toggleUserStatus(id: number) {
+    const user = this.users.find((u) => u.id === id);
+
+    if (user) {
+      if (user.status === 'Active') {
+        user.status = 'Inactive';
+      } else {
+        user.status = 'Active';
+      }
     }
-  ];
+  }
+  saveUser(form: any) {
+    if (form.invalid) {
+      return; // do not save if form is invalid
+    }
+  
+    this.userService.addUser(this.newUser).subscribe(() => {
+      this.loadUsers();
+      this.closeAddUserModal();
+      this.newUser = {
+        userId: '',
+        fullName: '',
+        email: '',
+        role: '',
+        department: '',
+        status: 'Active'
+      };
+    });
+  }
+  editingUser: any = null;
+showEditUserModal = false;
 
-  setTab(tab: string) {
-    this.currentTab = tab;
+editUser(id: number) {
+  const user = this.users.find(u => u.id === id);
+  if (user) {
+    this.editingUser = { ...user }; // clone object
+    this.showEditUserModal = true;
+  }
+}
+
+closeEditUserModal() {
+  this.showEditUserModal = false;
+}
+saveEditedUser(form: any) {
+  if (!form.valid || !this.editingUser || !this.editingUser.id) {
+    return; // do not proceed if form invalid or editingUser not set
   }
 
-  getActiveUsersCount(): number {
-    return this.users.filter(u => u.status === 'Active').length;
-  }
+  this.userService.updateUser(this.editingUser.id, this.editingUser).subscribe({
+    next: (res) => {
+      console.log('User updated successfully', res);
+      this.loadUsers(); // reload table
+      this.closeEditUserModal();
+      this.editingUser = null;
+    },
+    error: (err) => {
+      console.error('Update user error:', err);
 
-  getInactiveUsersCount(): number {
-    return this.users.filter(u => u.status === 'Inactive').length;
-  }
-
-  addUser() {
-    alert('Add User clicked');
-  }
+      // Optional: show a user-friendly message
+      alert(
+        err?.error?.message ||
+        'Something went wrong while updating the user. Check server logs.'
+      );
+    }
+  });
+}
+  
 
   manageRoles() {
-    this.setTab('roles');
+    console.log('Manage roles clicked');
   }
 
   auditLogs() {
-    this.setTab('audit');
+    console.log('Audit logs clicked');
   }
 
-  editUser(user: any) {
-    alert(`Edit ${user.fullName}`);
-  }
+  constructor(private userService: UserService) {}
 
-  toggleUserStatus(user: any) {
-    user.status = user.status === 'Active' ? 'Inactive' : 'Active';
+  ngOnInit(): void {
+    this.loadUsers();
   }
+  
+  
+  showAddUserModal = false;
+  
+  addUser() {
+    this.showAddUserModal = true;
+  }
+  
+  closeAddUserModal() {
+    this.showAddUserModal = false;
+  }
+  
+  // saveUser() {
+  
+  //   this.userService.addUser(this.newUser).subscribe(() => {
+  
+  //     this.loadUsers(); // reload table
+  
+  //     this.closeAddUserModal();
+  
+  //     this.newUser = {
+  //       userId: '',
+  //       fullName: '',
+  //       email: '',
+  //       role: '',
+  //       department: '',
+  //       status: 'Active'
+  //     };
+  
+  //   });
+  
+  // }
 
+  loadUsers() {
+    this.userService.getUsers().subscribe((data) => {
+      this.users = data;
+
+      this.totalUsers = this.users.length;
+
+      this.activeUsers = this.users.filter((u) => u.status === 'Active').length;
+
+      this.inactiveUsers = this.users.filter((u) => u.status !== 'Active').length;
+      const roles = new Set(this.users.map(u => u.role));
+      this.roleCount = roles.size;
+    });
+  }
 }

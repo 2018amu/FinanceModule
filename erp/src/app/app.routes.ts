@@ -9,7 +9,7 @@ import { DomaincomparisonComponent } from './layout/domaincomparison/domaincompa
 import { FinancialreportsComponent } from './layout/financialreports/financialreports.component';
 import { BudgetComponent } from './layout/budgeting/budgeting.component';
 import { BankandreconciliationComponent } from './layout/bankandreconciliation/bankandreconciliation.component';
-import { UsermanagementComponent } from './layout/usermanagement/usermanagement.component';
+import { UserComponent } from './layout/usermanagement/usermanagement.component';
 import { ModulesetupComponent } from './layout/modulesetup/modulesetup.component';
 
 export const routes: Routes = [
@@ -51,7 +51,7 @@ export const routes: Routes = [
   },
   {
     path:'usermanagement',
-    component:UsermanagementComponent
+    component:UserComponent
   },
   {
     path: 'domaincomparison',
