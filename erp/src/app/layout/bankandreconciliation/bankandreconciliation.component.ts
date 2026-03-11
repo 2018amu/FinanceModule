@@ -1,43 +1,40 @@
-import { Component } from '@angular/core'
-import {CommonModule} from '@angular/common'
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+interface BankAccount {
+  accountName: string;
+  bankName: string;
+  accountNumber: string;
+  accountType: string;
+  currentBalance: number;
+  lastUpdated: string;
+  status: string;
+}
 
 @Component({
   selector: 'app-bankandreconciliation',
-  standalone:true,
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './bankandreconciliation.component.html',
-  styleUrl: './bankandreconciliation.component.css',
+  styleUrls: ['./bankandreconciliation.component.css']
 })
 export class BankandreconciliationComponent {
+
   currentTab: string = 'bankaccounts';
 
-  totalBankBalance: number = 125420;
-  unreconciledCount: number = 18;
-  lastReconciliation: string = 'Oct 25, 2023';
-  bankAccountsCount: number = 4;
+  totalBankBalance: number = 0;
+  unreconciledCount: number = 0;
+  lastReconciliation: string = '';
+  bankAccountsCount: number = 0;
 
-  bankAccounts = [
-    {
-      accountName: 'Main Account',
-      bankName: 'Bank A',
-      accountNumber: '1234567890',
-      accountType: 'Checking',
-      currentBalance: 50000,
-      lastUpdated: 'Feb 15, 2026',
-      status: 'Active'
-    },
-    {
-      accountName: 'Savings Account',
-      bankName: 'Bank B',
-      accountNumber: '9876543210',
-      accountType: 'Savings',
-      currentBalance: 75420,
-      lastUpdated: 'Feb 14, 2026',
-      status: 'Active'
-    }
-  ];
+  // Empty array (no sample data)
+  bankAccounts: any[] = [];
+
   setTab(tab: string) {
     this.currentTab = tab;
+  }
+  trackByAccount(index: number, bank: any) {
+    return bank.id;
   }
 
   addBankAccount() {
@@ -52,12 +49,19 @@ export class BankandreconciliationComponent {
     alert('Reconcile Account clicked');
   }
 
-  editBank(bank: any) {
+  editBank(bank: BankAccount) {
     alert(`Edit ${bank.accountName}`);
   }
 
-  deleteBank(bank: any) {
-    alert(`Delete ${bank.accountName}`);
+  deleteBank(bank: BankAccount) {
+    const confirmDelete = confirm(`Delete ${bank.accountName}?`);
+
+    if (confirmDelete) {
+      this.bankAccounts = this.bankAccounts.filter(
+        acc => acc.accountNumber !== bank.accountNumber
+      );
+      this.bankAccountsCount = this.bankAccounts.length;
+    }
   }
 
 }

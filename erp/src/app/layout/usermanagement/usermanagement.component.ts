@@ -76,6 +76,13 @@ saveEditedUser(form: any) {
 
   this.userService.updateUser(this.editingUser.id, this.editingUser).subscribe({
     next: (res) => {
+      this.auditLogsList.unshift({
+        user: this.editingUser.fullName,
+        action: "Updated User",
+        role: this.editingUser.role,
+        time: new Date().toLocaleString()
+      });
+
       console.log('User updated successfully', res);
       this.loadUsers(); // reload table
       this.closeEditUserModal();
@@ -94,13 +101,47 @@ saveEditedUser(form: any) {
 }
   
 
-  manageRoles() {
-    console.log('Manage roles clicked');
+roles: string[] = [];
+newRole: string = '';
+showRoleModal = false;
+manageRoles() {
+  // collect unique roles from users
+  this.roles = [...new Set(this.users.map(u => u.role))];
+  this.showRoleModal = true;
+}
+addRole() {
+  if (!this.newRole.trim()) return;
+
+  if (!this.roles.includes(this.newRole)) {
+    this.roles.push(this.newRole);
   }
 
-  auditLogs() {
-    console.log('Audit logs clicked');
-  }
+  this.newRole = '';
+}
+deleteRole(role: string) {
+  this.roles = this.roles.filter(r => r !== role);
+}
+closeRoleModal() {
+  this.showRoleModal = false;
+}
+
+auditLogsList: any[] = [];
+showAuditModal = false;
+
+auditLogs() {
+
+  this.auditLogsList = this.users.map(u => ({
+    user: u.fullName,
+    action: "Viewed User Record",
+    role: u.role,
+    time: new Date().toLocaleString()
+  }));
+
+  this.showAuditModal = true;
+}
+closeAuditModal() {
+  this.showAuditModal = false;
+}
 
   constructor(private userService: UserService) {}
 

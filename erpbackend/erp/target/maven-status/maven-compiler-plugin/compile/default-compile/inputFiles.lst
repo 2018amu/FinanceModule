@@ -2,11 +2,15 @@ C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\dashboard\Ca
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\domain\Domain.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\usermanagement\UserRepository.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\config\CorsConfig.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\account\BankAccount.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\generalledger\GeneralLedgerController.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\chartofaccounts\ChartOfAccountController.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\dashboard\PendingActionRepository.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\generalledger\GeneralLedger.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\chartofaccounts\ChartOfAccountService.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\account\BankAccountRepository.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\account\BankAccountService.java
+C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\account\BankAccountController.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\domain\DomainRepository.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\App.java
 C:\Users\User\Desktop\Bank\erpbackend\erp\src\main\java\com\company\domain\DomainController.java
