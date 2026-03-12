@@ -24,4 +24,17 @@ export class BankAccountService {
   getBankAccounts(): Observable<BankAccount[]> {
     return this.http.get<BankAccount[]>(this.apiUrl);
   }
+  addBankAccount(bank: BankAccount): Observable<BankAccount> {
+    return this.http.post<BankAccount>(this.apiUrl, bank);
+  }
+  importStatement(formData: FormData) {
+    return this.http.post('http://localhost:8080/api/bank-accounts/import', formData,{ responseType: 'text' });
+  }
+  reconcileBankAccounts(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reconcile`, {},{ responseType: 'text' }); // empty body, backend handles logic
+  }
+  deleteBankAccount(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
+  }
+  
 }
