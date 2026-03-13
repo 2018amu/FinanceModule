@@ -1,5 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+
+export interface Budget{
+  id:number
+  accountName:string
+  budgetAmount:number
+  actualAmount:number
+  variance:number
+  percentUsed:number
+  status:string
+}
 
 @Component({
   selector: 'app-budget',
@@ -7,20 +18,64 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './budgeting.component.html'
 })
-export class BudgetComponent {
+export class BudgetComponent implements OnInit {
 
   currentTab: string = 'budgetplan';
 
-  totalBudget: number = 450000;
-  overBudgetCount: number = 3;
-  budgetVariancePercent: number = 95.2;
+  // table data used by your HTML
+  budgetData:any[] = [];
 
-  budgetData = [
-    { account: 'Marketing', budget: 120000, actual: 110000 },
-    { account: 'Operations', budget: 150000, actual: 165000 },
-    { account: 'HR', budget: 80000, actual: 76000 },
-    { account: 'IT Infrastructure', budget: 100000, actual: 98000 }
-  ];
+  // summary cards
+  totalBudget: number = 0;
+  overBudgetCount: number = 0;
+  budgetVariancePercent: number = 0;
+
+  constructor(private http:HttpClient){}
+
+  ngOnInit(): void {
+    this.loadBudgets();
+  }
+
+  loadBudgets(){
+
+    this.http.get<Budget[]>('http://localhost:8080/api/budgets')
+    .subscribe({
+
+      next:(data)=>{
+
+        // convert backend format to frontend format
+        this.budgetData = data.map(b => ({
+          account: b.accountName,
+          budget: b.budgetAmount,
+          actual: b.actualAmount
+        }));
+
+        this.calculateSummary();
+      },
+
+      error:(err)=>{
+        console.error("Error loading budgets",err);
+      }
+
+    });
+
+  }
+
+  calculateSummary(){
+
+    this.totalBudget = this.budgetData
+      .reduce((sum,item)=>sum + item.budget ,0);
+
+    const totalActual = this.getTotalActual();
+
+    if(this.totalBudget > 0){
+      this.budgetVariancePercent = (totalActual / this.totalBudget) * 100;
+    }
+
+    this.overBudgetCount = this.budgetData
+      .filter(item => item.actual > item.budget).length;
+
+  }
 
   setTab(tab: string) {
     this.currentTab = tab;
@@ -47,4 +102,5 @@ export class BudgetComponent {
   analyzeVariance() {
     alert('Variance Analysis clicked');
   }
+
 }
