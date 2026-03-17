@@ -20,31 +20,31 @@ public class ARInvoiceService {
         return repository.findAll();
     }
 
-// Record payment for a single invoice
-@Transactional
-public ARInvoice recordPayment(Long invoiceId, Double amount) {
-    ARInvoice invoice = repository.findById(invoiceId)
-            .orElseThrow(() -> new RuntimeException("Invoice not found"));
+    // Record payment for a single invoice
+    @Transactional
+    public ARInvoice recordPayment(Long invoiceId, Double amount) {
+        ARInvoice invoice = repository.findById(invoiceId)
+                .orElseThrow(() -> new RuntimeException("Invoice not found"));
 
-    // Convert to BigDecimal
-    BigDecimal currentBalance = invoice.getBalance();
-    BigDecimal paymentAmount = BigDecimal.valueOf(amount);
+        // Convert to BigDecimal
+        BigDecimal currentBalance = invoice.getBalance();
+        BigDecimal paymentAmount = BigDecimal.valueOf(amount);
 
-    // Subtract payment
-    BigDecimal newBalance = currentBalance.subtract(paymentAmount);
-    invoice.setBalance(newBalance);
+        // Subtract payment
+        BigDecimal newBalance = currentBalance.subtract(paymentAmount);
+        invoice.setBalance(newBalance);
 
-    // Update status
-    if (newBalance.compareTo(BigDecimal.ZERO) <= 0) {
-        invoice.setStatus("PAID");
-        invoice.setBalance(BigDecimal.ZERO); // prevent negative
-    } else {
-        invoice.setStatus("PARTIAL");
+        // Update status
+        if (newBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            invoice.setStatus("PAID");
+            invoice.setBalance(BigDecimal.ZERO); // prevent negative
+        } else {
+            invoice.setStatus("PARTIAL");
+        }
+
+        ARInvoice updatedInvoice = repository.save(invoice);
+        return updatedInvoice;
     }
-
-   ARInvoice updatedInvoice = repository.save(invoice);
-return updatedInvoice;
-}
 
     // Pay all invoices
     @Transactional

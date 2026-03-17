@@ -33,11 +33,7 @@ export class AccountsrecievableComponent implements OnInit {
     status: 'PENDING',
   };
 
-  
 
-
-  
-// accountsrecievable.component.ts
 selectedInvoice: ARInvoice | null = null;
 isViewInvoiceOpen: boolean = false;
 
@@ -53,9 +49,7 @@ closeViewInvoice() {
   this.selectedInvoice = null;
 }
   
-  
-
-  // Function to save invoice via backend
+// Function to save invoice via backend
   saveInvoice() {
     if (!this.newInvoice.customerName || !this.newInvoice.invoiceNumber || !this.newInvoice.amount) {
       alert('Please fill all required fields');
@@ -72,7 +66,7 @@ closeViewInvoice() {
       next: (data:ARInvoice) => {
         this.invoices.push(data);
         this.filteredInvoices.push(data);
-        alert('New Invoice Added');
+        alert('Invoice has been successfully recorded.');
         this.loadCustomerCount();  // refresh customer count
         this.closeAddInvoice();
       },
@@ -118,9 +112,8 @@ closeViewInvoice() {
       },
     });
   }
-  // ---------------- Backend functions ----------------
- 
-  payAllInvoices() {
+  
+ payAllInvoices() {
     this.arService.payAllInvoices().subscribe({
       next: () => {
         // Update frontend table after paying all invoices
@@ -131,7 +124,7 @@ closeViewInvoice() {
         this.filteredInvoices = [...this.invoices];
         alert('All invoices paid successfully!');
       },
-      error: (err) => console.error('Error paying all invoices', err)
+      error: (err:any) => console.error('Error paying all invoices', err)
     });
   }
   onPayInvoice(invoice: ARInvoice, amount: number) {
@@ -228,23 +221,6 @@ closeViewInvoice() {
     };
   }
 
-  // RECORD PAYMENT
-  // onPayInvoice(invoice: ARInvoice, amount: number): void {
-  //   if (amount <= 0) return;
-
-  //   this.arService.recordPayment(invoice.id, amount).subscribe({
-  //     next: (updated: ARInvoice) => {  // explicitly type updated
-  //       const index = this.invoices.findIndex(inv => inv.id === invoice.id);
-  //       if (index !== -1) this.invoices[index] = updated;
-  //       this.filterInvoices();
-  //     },
-  //     error: (err: any) => {            // explicitly type error
-  //       console.error('Error recording payment', err);
-  //     }
-  //   });
-  // }
-
-  // accountsrecievable.component.ts
   overdueTotal: number = 0;
   totalReceivables: number = 0;
   dueThisWeekTotal: number = 0;

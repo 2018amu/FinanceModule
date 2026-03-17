@@ -2,11 +2,10 @@ package com.company.accountsreceivable;
 
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/ar") // changed to /api/ar for Accounts Receivable
+@RequestMapping("/api/ar") 
 @CrossOrigin
 public class ARInvoiceController {
 
