@@ -1,174 +1,258 @@
 <div class="p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-semibold flex items-center gap-2">
+      <i class="fas fa-hand-holding-usd text-green-600"></i>
+      Accounts Receivable
+    </h2>
 
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-semibold flex items-center gap-2">
-        <i class="fas fa-hand-holding-usd text-green-600"></i>
-        Accounts Receivable
-      </h2>
-  
-      <div class="flex gap-3">
-        <button
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
-        >
-          <i class="fas fa-plus mr-2"></i> Create Invoice
-        </button>
-  
-        <button
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"
-        >
-          <i class="fas fa-money-bill-wave mr-2"></i> Record Payment
-        </button>
-  
-        <button
-          class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow"
-        >
-          <i class="fas fa-envelope mr-2"></i> Send Reminders
-        </button>
-      </div>
-    </div>
-  
-    <!-- Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-  
-      <div class="bg-white rounded-xl shadow p-5">
-        <div class="flex justify-between items-center">
-          <span class="text-gray-500">Total Receivables</span>
-          <i class="fas fa-file-invoice text-yellow-500"></i>
-        </div>
-        <div class="text-2xl font-bold mt-2">$ 42,560</div>
-      </div>
-  
-      <div class="bg-white rounded-xl shadow p-5">
-        <div class="flex justify-between items-center">
-          <span class="text-gray-500">Overdue</span>
-          <i class="fas fa-exclamation-triangle text-red-500"></i>
-        </div>
-        <div class="text-2xl font-bold mt-2">$ 8,250</div>
-      </div>
-  
-      <div class="bg-white rounded-xl shadow p-5">
-        <div class="flex justify-between items-center">
-          <span class="text-gray-500">Due This Week</span>
-          <i class="fas fa-calendar-week text-blue-500"></i>
-        </div>
-        <div class="text-2xl font-bold mt-2">$ 15,300</div>
-      </div>
-  
-      <div class="bg-white rounded-xl shadow p-5">
-        <div class="flex justify-between items-center">
-          <span class="text-gray-500">Customers</span>
-          <i class="fas fa-user-friends text-green-500"></i>
-        </div>
-        <div class="text-2xl font-bold mt-2">78</div>
-      </div>
-  
-    </div>
-  
-    <!-- Tabs -->
-    <div class="border-b mb-6 flex gap-6">
-  
+    <div class="flex gap-3">
       <button
-        (click)="setTab('arinvoices')"
-        [ngClass]="currentTab==='arinvoices' 
-          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold' 
-          : 'text-gray-500 pb-2'"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
+        (click)="openAddInvoice()"
       >
-        Invoices
+        <i class="fas fa-plus mr-2"></i> Create Invoice
       </button>
-  
+
       <button
-        (click)="setTab('arcustomers')"
-        [ngClass]="currentTab==='arcustomers' 
-          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold' 
-          : 'text-gray-500 pb-2'"
+        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"
+        (click)="payAllInvoices()"
       >
-        Customers
+        <i class="fas fa-money-bill-wave mr-2"></i> Record Payment
       </button>
-  
+
       <button
-        (click)="setTab('arcollections')"
-        [ngClass]="currentTab==='arcollections' 
-          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold' 
-          : 'text-gray-500 pb-2'"
+        class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow"
+        (click)="sendReminders()"
       >
-        Collections
+        <i class="fas fa-envelope mr-2"></i> Send Reminders
       </button>
-  
-      <button
-        (click)="setTab('araging')"
-        [ngClass]="currentTab==='araging' 
-          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold' 
-          : 'text-gray-500 pb-2'"
-      >
-        Aging Analysis
-      </button>
-  
     </div>
-  
-    <!-- ================= INVOICES TAB ================= -->
-    <div *ngIf="currentTab==='arinvoices'">
-  
-      <div class="overflow-x-auto bg-white rounded-xl shadow">
-        <table class="min-w-full text-sm text-left">
-          <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-            <tr>
-              <th class="px-6 py-3">Customer</th>
-              <th class="px-6 py-3">Invoice No.</th>
-              <th class="px-6 py-3">Date</th>
-              <th class="px-6 py-3">Due Date</th>
-              <th class="px-6 py-3">Amount</th>
-              <th class="px-6 py-3">Balance</th>
-              <th class="px-6 py-3">Status</th>
-              <th class="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y">
-  
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4">ABC Pvt Ltd</td>
-              <td class="px-6 py-4">INV-1001</td>
-              <td class="px-6 py-4">2026-02-01</td>
-              <td class="px-6 py-4">2026-02-10</td>
-              <td class="px-6 py-4">$ 2,500</td>
-              <td class="px-6 py-4">$ 1,200</td>
-              <td class="px-6 py-4">
-                <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded text-xs">
-                  Partial
-                </span>
-              </td>
-              <td class="px-6 py-4 space-x-2">
-                <button class="text-blue-600 hover:underline">View</button>
-                <button class="text-green-600 hover:underline">Pay</button>
-              </td>
-            </tr>
-  
-          </tbody>
-        </table>
-      </div>
-  
-    </div>
-  
-    <!-- ================= CUSTOMERS TAB ================= -->
-    <div *ngIf="currentTab==='arcustomers'">
-      <div class="bg-white p-6 rounded-xl shadow">
-        Customers content here...
-      </div>
-    </div>
-  
-    <!-- ================= COLLECTIONS TAB ================= -->
-    <div *ngIf="currentTab==='arcollections'">
-      <div class="bg-white p-6 rounded-xl shadow">
-        Collections content here...
-      </div>
-    </div>
-  
-    <!-- ================= AGING TAB ================= -->
-    <div *ngIf="currentTab==='araging'">
-      <div class="bg-white p-6 rounded-xl shadow">
-        Aging analysis content here...
-      </div>
-    </div>
-  
   </div>
-  
+
+  <!-- Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-500">Total Receivables</span>
+        <i class="fas fa-file-invoice text-yellow-500"></i>
+      </div>
+      <div class="text-2xl font-bold mt-2">$ {{ totalReceivables }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-500">Overdue</span>
+        <i class="fas fa-exclamation-triangle text-red-500"></i>
+      </div>
+      <div class="text-2xl font-bold mt-2">$ {{ overdueTotal }}</div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-500">Due This Week</span>
+        <i class="fas fa-calendar-week text-blue-500"></i>
+      </div>
+      <div class="text-2xl font-bold mt-2">
+        <!-- $ {{ invoices.filter(inv => isDueThisWeek(inv.dueDate)).reduce((sum, inv) => sum + inv.amount, 0) | number:'1.2-2' }} -->
+        $ {{ dueThisWeekTotal }}
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow p-5">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-500">Customers</span>
+        <i class="fas fa-user-friends text-green-500"></i>
+      </div>
+      <div class="text-2xl font-bold mt-2">{{ customerCount }}</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="border-b mb-6 flex gap-6">
+    <button
+      (click)="setTab('arinvoices')"
+      [ngClass]="
+        currentTab === 'arinvoices'
+          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'
+      "
+    >
+      Invoices
+    </button>
+
+    <button
+      (click)="setTab('arcustomers')"
+      [ngClass]="
+        currentTab === 'arcustomers'
+          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'
+      "
+    >
+      Customers
+    </button>
+
+    <button
+      (click)="setTab('arcollections')"
+      [ngClass]="
+        currentTab === 'arcollections'
+          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'
+      "
+    >
+      Collections
+    </button>
+
+    <button
+      (click)="setTab('araging')"
+      [ngClass]="
+        currentTab === 'araging'
+          ? 'border-b-2 border-blue-600 text-blue-600 pb-2 font-semibold'
+          : 'text-gray-500 pb-2'
+      "
+    >
+      Aging Analysis
+    </button>
+  </div>
+
+  <!-- INVOICES TAB -->
+  <div *ngIf="currentTab === 'arinvoices'">
+    <div class="overflow-x-auto bg-white rounded-xl shadow">
+      <table class="min-w-full text-sm text-left">
+        <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+          <tr>
+            <th class="px-6 py-3">Customer</th>
+            <th class="px-6 py-3">Invoice No.</th>
+            <th class="px-6 py-3">Date</th>
+            <th class="px-6 py-3">Due Date</th>
+            <th class="px-6 py-3">Amount</th>
+            <th class="px-6 py-3">Balance</th>
+            <th class="px-6 py-3">Status</th>
+            <th class="px-6 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <tr
+            *ngFor="let invoice of filteredInvoices"
+            [ngClass]="{
+              'bg-yellow-100': remindedInvoices.has(invoice.id)
+            }"
+            class="hover:bg-gray-50"
+          >
+            <td class="px-6 py-4">{{ invoice.customerName }}</td>
+            <td class="px-6 py-4">{{ invoice.invoiceNumber }}</td>
+            <td class="px-6 py-4">{{ invoice.invoiceDate }}</td>
+            <td class="px-6 py-4">{{ invoice.dueDate }}</td>
+            <td class="px-6 py-4 font-semibold text-gray-800">${{ invoice.amount }}</td>
+            <td class="px-6 py-4 font-semibold text-gray-800">${{ invoice.balance }}</td>
+            <td class="px-6 py-4">
+              <span
+                class="px-2 py-1 rounded-full text-xs font-semibold"
+                [ngClass]="getStatusClass(invoice.status)"
+              >
+                {{ invoice.status | titlecase }}
+                <span
+                  *ngIf="remindedInvoices.has(invoice.id)"
+                  class="ml-2 text-xs text-yellow-700 font-semibold"
+                >
+                  (Reminder Sent)
+                </span>
+              </span>
+            </td>
+            <td class="px-6 py-4 space-x-2">
+              <button class="text-blue-600 hover:underline" (click)="onViewInvoice(invoice)">
+                View
+              </button>
+              <button
+                class="text-green-600 hover:underline"
+                (click)="onPayInvoice(invoice, invoice.balance)"
+              >
+                Pay
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS TAB -->
+  <div *ngIf="currentTab === 'arcustomers'">
+    <div class="bg-white p-6 rounded-xl shadow">Customers content here...</div>
+  </div>
+
+  <!-- COLLECTIONS TAB -->
+  <div *ngIf="currentTab === 'arcollections'">
+    <div class="bg-white p-6 rounded-xl shadow">Collections content here...</div>
+  </div>
+
+  <!-- AGING TAB -->
+  <div *ngIf="currentTab === 'araging'">
+    <div class="bg-white p-6 rounded-xl shadow">Aging analysis content here...</div>
+  </div>
+</div>
+<div
+  *ngIf="isAddInvoiceOpen"
+  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"
+>
+  <div class="bg-white p-6 rounded-lg w-96 shadow-lg">
+    <h2 class="text-xl font-bold mb-4">Add Invoice</h2>
+
+    <div class="space-y-3">
+      <input
+        type="text"
+        placeholder="Customer Name"
+        [(ngModel)]="newInvoice.customerName"
+        class="w-full border p-2 rounded"
+      />
+      <input
+        type="text"
+        placeholder="Invoice Number"
+        [(ngModel)]="newInvoice.invoiceNumber"
+        class="w-full border p-2 rounded"
+      />
+      <input type="date" [(ngModel)]="newInvoice.invoiceDate" class="w-full border p-2 rounded" />
+      <input type="date" [(ngModel)]="newInvoice.dueDate" class="w-full border p-2 rounded" />
+      <input
+        type="number"
+        placeholder="Amount"
+        [(ngModel)]="newInvoice.amount"
+        class="w-full border p-2 rounded"
+      />
+    </div>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button (click)="closeAddInvoice()" class="px-4 py-2 bg-gray-400 text-white rounded">
+        Cancel
+      </button>
+      <button (click)="saveInvoice()" class="px-4 py-2 bg-green-600 text-white rounded">
+        Save
+      </button>
+    </div>
+  </div>
+</div>
+<!-- View Invoice Modal -->
+<div
+  *ngIf="isViewInvoiceOpen"
+  class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center"
+>
+  <div class="bg-white p-6 rounded-lg w-96 shadow-lg">
+    <h2 class="text-xl font-bold mb-4">Invoice Details</h2>
+
+    <div class="space-y-2">
+      <p><strong>Customer:</strong> {{ selectedInvoice?.customerName }}</p>
+      <p><strong>Invoice Number:</strong> {{ selectedInvoice?.invoiceNumber }}</p>
+      <p><strong>Invoice Date:</strong> {{ selectedInvoice?.invoiceDate }}</p>
+      <p><strong>Due Date:</strong> {{ selectedInvoice?.dueDate }}</p>
+      <p><strong>Amount:</strong> ${{ selectedInvoice?.amount }}</p>
+      <p><strong>Balance:</strong> ${{ selectedInvoice?.balance }}</p>
+      <p><strong>Status:</strong> {{ selectedInvoice?.status }}</p>
+    </div>
+
+    <div class="flex justify-end mt-4">
+      <button (click)="closeViewInvoice()" class="px-4 py-2 bg-gray-400 text-white rounded">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
