@@ -30,9 +30,12 @@ export class FixedAssetService {
     return this.http.post<FixedAsset>(this.apiUrl, asset);
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
+  // delete(id: number): Observable<void> {
+  //   return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  // }
+  delete(id: number) {
+  return this.http.delete(`${this.apiUrl}/${id}`);
+}
 
   runDepreciation(): Observable<FixedAsset[]> {
     return this.http.post<FixedAsset[]>(`${this.apiUrl}/depreciation`, {});

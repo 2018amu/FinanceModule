@@ -1,6 +1,5 @@
 package com.company.fixedassets;
 
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -9,7 +8,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/assets")
-@CrossOrigin("*")
+
 public class FixedAssetController {
 
     private final FixedAssetService service;
@@ -30,16 +29,16 @@ public class FixedAssetController {
         return service.getAllAssets();
     }
 
-    // Delete
-    @DeleteMapping("/{id}")
-    public void deleteAsset(@PathVariable Long id) {
-        service.deleteAsset(id);
-    }
-
     // Run Depreciation
     @PostMapping("/depreciation")
     public List<FixedAsset> runDepreciation() {
         return service.runDepreciation();
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteAsset(@PathVariable("id") Long id) {
+        System.out.println("Deleting asset with id: " + id);
+        service.deleteAsset(id);
     }
 
     // Dashboard Summary

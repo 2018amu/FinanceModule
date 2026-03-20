@@ -33,8 +33,14 @@ public class FixedAssetService {
     }
 
     // Delete Asset
+    // public void deleteAsset(Long id) {
+    //     repository.deleteById(id);
+    // }
     public void deleteAsset(Long id) {
-        repository.deleteById(id);
+        FixedAsset asset = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Asset not found with id: " + id));
+    
+        repository.delete(asset);
     }
 
     // Run Depreciation (Simple Logic)
