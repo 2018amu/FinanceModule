@@ -53,7 +53,7 @@ export class ModulesetupComponent implements OnInit {
           this.accountingMethod = setup.accountingMethod;
         }
       },
-      error: (err) => {
+      error: (err:any) => {
         console.error('Error loading setup:', err);
       }
     });
