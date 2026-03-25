@@ -8,10 +8,9 @@ type ReportTab = 'balancesheet' | 'incomestatement' | 'cashflow' | 'ratios';
   selector: 'app-reports',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './financialreports.component.html'
+  templateUrl: './financialreports.component.html',
 })
 export class FinancialreportsComponent implements OnInit {
-
   currentTab: ReportTab = 'balancesheet';
   records: FinancialRecord[] = [];
 
@@ -22,22 +21,20 @@ export class FinancialreportsComponent implements OnInit {
   }
 
   // calculate total by category
-getTotal(category: string): number {
-  return this.records
-    ?.filter(r => r.category === category)
-    .reduce((sum, r) => sum + r.amount, 0) || 0;
-}
-downloadReport(type: string) {
-  console.log('Download report:', type);
-}
+  getTotal(category: string): number {
+    return (
+      this.records?.filter((r) => r.category === category).reduce((sum, r) => sum + r.amount, 0) ||
+      0
+    );
+  }
+  downloadReport(type: string) {
+    console.log('Download report:', type);
+  }
 
-
-
-// calculate total of all records
-getTotalAll(): number {
-  return this.records
-    ?.reduce((sum, r) => sum + r.amount, 0) || 0;
-}
+  // calculate total of all records
+  getTotalAll(): number {
+    return this.records?.reduce((sum, r) => sum + r.amount, 0) || 0;
+  }
 
   setTab(tab: ReportTab) {
     this.currentTab = tab;
@@ -51,7 +48,7 @@ getTotalAll(): number {
       },
       error: (err) => {
         console.error('Error loading data', err);
-      }
+      },
     });
   }
 }

@@ -76,7 +76,7 @@ export class GeneralLedgerComponent implements OnInit {
 
   runMonthEndClose() {
 
-    // 1️⃣ Check if there are any Posted journals to close
+    // 1️ Check if there are any Posted journals to close
     const postedJournals = this.journals.filter(j => j.status === 'Posted');
   
     if (postedJournals.length === 0) {
@@ -84,15 +84,15 @@ export class GeneralLedgerComponent implements OnInit {
       return;
     }
   
-    // 2️⃣ Optional: Confirm with user
+    // 2️ Optional: Confirm with user
     const confirmed = confirm('Are you sure you want to run Month-End Close? This action cannot be undone.');
     if (!confirmed) return;
   
-    // 3️⃣ Call backend API to close month
+    // 3️ Call backend API to close month
     this.glService.runMonthEndClose().subscribe({
       next: (res: any) => {
   
-        // 4️⃣ Update UI: mark all journals as 'Closed' (optional)
+        // 4️ Update UI: mark all journals as 'Closed' (optional)
         postedJournals.forEach(journal => {
           journal.status = 'Closed';
         });

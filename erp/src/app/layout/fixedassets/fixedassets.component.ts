@@ -11,8 +11,8 @@ import { FixedAssetService, FixedAsset } from '../../services/fixedasset.service
   styleUrls: ['./fixedassets.component.css'],
 })
 export class FixedassetsComponent implements OnInit {
-  currentTab: string = 'assetslist';
 
+  currentTab: string = 'assetslist';
   searchText: string = '';
   filterStatus: string = 'all';
 
@@ -110,21 +110,21 @@ export class FixedassetsComponent implements OnInit {
     this.loadSummary();
   }
 
-  // ✅ LOAD DATA FROM DB
+  //  LOAD DATA FROM DB
   loadAssets() {
     this.assetService.getAll().subscribe((data) => {
       this.assets = data;
     });
   }
 
-  // ✅ LOAD SUMMARY CARDS
+  //  LOAD SUMMARY CARDS
   loadSummary() {
     this.assetService.getSummary().subscribe((data) => {
       this.summary = data;
     });
   }
 
-  // ✅ ADD ASSET
+  //  ADD ASSET
   addAsset() {
     this.assetService.add(this.newAsset).subscribe(() => {
       alert('Asset added successfully');
@@ -144,9 +144,6 @@ export class FixedassetsComponent implements OnInit {
     });
   }
 
-  
-
-  
   runDepreciation() {
     this.assetService.runDepreciation().subscribe(() => {
       alert('Depreciation calculated');
@@ -155,7 +152,7 @@ export class FixedassetsComponent implements OnInit {
     });
   }
 
-  // ✅ FILTER LOGIC
+  //  FILTER LOGIC
   filteredAssets() {
     return this.assets.filter((asset) => {
       const matchesSearch =

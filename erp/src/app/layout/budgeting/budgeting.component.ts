@@ -24,12 +24,6 @@ export class BudgetComponent implements OnInit {
 
   // table data used by your HTML
   budgetData: any[] = [];
-  
-  
-
-  // summary cards
-  // totalBudget: number = 0;
-  // overBudgetCount: number = 0;
   budgetVariancePercent: number = 0;
   newBudget: Partial<Budget> = {};
 
@@ -140,7 +134,7 @@ export class BudgetComponent implements OnInit {
         // Reload table data
         this.loadBudgets();
 
-        // ✅ Reset newBudget properly
+        //  Reset newBudget properly
         this.newBudget = {}; // <-- reset as empty Partial object
       },
       error: (err) => {
@@ -202,12 +196,7 @@ computeSummaries() {
   this.onBudgetCount = this.budgetData.filter(item => (item.status ?? '') === 'On Budget').length;
   this.underBudgetCount = this.budgetData.filter(item => (item.status ?? '') === 'Under Budget').length;
 }
-
-
-  
-  
-
-  analyzeVariance() {
+analyzeVariance() {
     if (!this.budgetData || this.budgetData.length === 0) {
       alert('No budget data to analyze.');
       return;

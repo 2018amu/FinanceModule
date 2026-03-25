@@ -65,26 +65,26 @@ export class BankandreconciliationComponent implements OnInit {
     this.showBankModal = true;
   }
   // For adding a new bank account
-openAddBankModal() {
-  this.editingBank = {
-    id: 0, // or undefined, backend will assign
-    accountName: '',
-    bankName: '',
-    accountNumber: '',
-    accountType: '',
-    currentBalance: 0,
-    lastUpdated: new Date().toISOString().split('T')[0], // today's date
-    status: 'Active'
-  };
-  this.showBankModal = true;
-}
+  openAddBankModal() {
+    this.editingBank = {
+      id: 0, // or undefined, backend will assign
+      accountName: '',
+      bankName: '',
+      accountNumber: '',
+      accountType: '',
+      currentBalance: 0,
+      lastUpdated: new Date().toISOString().split('T')[0], // today's date
+      status: 'Active',
+    };
+    this.showBankModal = true;
+  }
 
-// For editing an existing bank account
-openEditBankModal(bank: BankAccount) {
-  // Clone to avoid mutating table data before save
-  this.editingBank = { ...bank };
-  this.showBankModal = true;
-}
+  // For editing an existing bank account
+  openEditBankModal(bank: BankAccount) {
+    // Clone to avoid mutating table data before save
+    this.editingBank = { ...bank };
+    this.showBankModal = true;
+  }
 
   closeModal() {
     this.showBankModal = false;
@@ -101,37 +101,42 @@ openEditBankModal(bank: BankAccount) {
   }
   saveBank() {
     if (!this.editingBank) return;
-  
+
     // Clone object so we don't bind template directly to the table
     const bankToSave = { ...this.editingBank };
-  
+
     this.bankService.addBankAccount(bankToSave).subscribe({
       next: (savedBank: BankAccount) => {
         if (bankToSave.id) {
           // Editing an existing bank account
-          const index = this.bankAccounts.findIndex(b => b.id === savedBank.id);
+          const index = this.bankAccounts.findIndex((b) => b.id === savedBank.id);
           if (index !== -1) {
             this.bankAccounts[index] = savedBank; // replace old data
           }
-          this.showToastMessage(`Bank account "${savedBank.accountName}" updated successfully!`, 'success');
+          this.showToastMessage(
+            `Bank account "${savedBank.accountName}" updated successfully!`,
+            'success'
+          );
         } else {
           // Adding a new bank account
           this.bankAccounts.push(savedBank); // push backend-saved object with proper ID
-          this.showToastMessage(`Bank account "${savedBank.accountName}" added successfully!`, 'success');
+          this.showToastMessage(
+            `Bank account "${savedBank.accountName}" added successfully!`,
+            'success'
+          );
         }
-  
+
         this.closeModal();
         this.bankAccountsCount = this.bankAccounts.length;
       },
       error: (err) => {
         console.error('Error saving bank account:', err);
         this.showToastMessage('Failed to save bank account. Please try again.', 'error');
-      }
+      },
     });
   }
+
   
- 
-  // Inside BankandreconciliationComponent
   toastMessage: string = '';
   showToast: boolean = false;
   toastType: 'success' | 'error' = 'success';
@@ -203,26 +208,29 @@ openEditBankModal(bank: BankAccount) {
     status: '',
   };
   editBank(bank: BankAccount) {
-    this.editingBank = { ...bank }; // clone to avoid direct changes
+    this.editingBank = { ...bank };
     this.showBankModal = true;
   }
 
   deleteBank(bank: BankAccount) {
     const confirmDelete = confirm(`Delete ${bank.accountName}?`);
     if (!confirmDelete) return;
-  
+
     // Call backend to delete
     this.bankService.deleteBankAccount(bank.id!).subscribe({
       next: (res) => {
         // Remove from local array only if backend succeeds
-        this.bankAccounts = this.bankAccounts.filter(acc => acc.id !== bank.id);
+        this.bankAccounts = this.bankAccounts.filter((acc) => acc.id !== bank.id);
         this.bankAccountsCount = this.bankAccounts.length;
-        this.showToastMessage(`Bank account "${bank.accountName}" deleted successfully!`, 'success');
+        this.showToastMessage(
+          `Bank account "${bank.accountName}" deleted successfully!`,
+          'success'
+        );
       },
       error: (err) => {
         console.error('Error deleting bank account:', err);
         this.showToastMessage('Failed to delete bank account. Please try again.', 'error');
-      }
+      },
     });
   }
 }
